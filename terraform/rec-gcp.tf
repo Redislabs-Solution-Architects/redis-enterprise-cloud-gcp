@@ -1,3 +1,10 @@
+#
+# Set the following variables in your shell environment:
+# export GOOGLE_APPLICATION_CREDENTIALS=<your Google APIs credentials>
+# export REDISCLOUD_ACCESS_KEY=<your Redis Enterrpise Cloud api access key>
+# export REDISCLOUD_SECRET_KEY=<your Redis Enterprise Cloud secret key>
+# 
+
 terraform {
  required_providers {
    rediscloud = {
