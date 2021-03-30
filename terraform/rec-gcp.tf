@@ -3,6 +3,14 @@
 # export GOOGLE_APPLICATION_CREDENTIALS=<your Google APIs credentials>
 # export REDISCLOUD_ACCESS_KEY=<your Redis Enterrpise Cloud api access key>
 # export REDISCLOUD_SECRET_KEY=<your Redis Enterprise Cloud secret key>
+#
+# How to deploy:
+# % terraform init
+# % terraform plan
+# % terraform apply
+#
+# How to tear down:
+# % terraform destroy
 # 
 
 terraform {
