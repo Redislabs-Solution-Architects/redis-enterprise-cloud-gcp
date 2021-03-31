@@ -136,9 +136,23 @@ Next, select "+" and choose **Import** in the flyout:
 ![Import Dashboard](./img/import.png)
 
 It will then land you on the following screen to load your JSON files for the following three dashboards.
-* Redis Enterprise Cluster [cluster.json](./json/cluster.json)
-* Redis Enterprise Cluster Nodes [node.json](./json/cluster.json)
-* Redis Enterprise Databases (BDB) [database.json](./json/database.json)
+* Redis Enterprise Cluster - [cluster.json](./json/cluster.json)
+* Redis Enterprise Cluster Nodes - [node.json](./json/cluster.json)
+* Redis Enterprise Databases (BDB) - [database.json](./json/database.json)
 ![Load JSON](./img/load_json.png)
+
+Copy the content of [cluster.json](./json/cluster.json) to the "Or past JSON" textbox as shown below:
+![cluster.json](./img/cluster_json.png)
+
+Then click the "Load" button.  You will see the next screen as follows:
+![Import cluster dashboard](./img/import_dashboard.png)
+
+Enter a name for your Redis Enterprise Cluster dashboard for your subscription and select the your Prometheus data source:
+![Import cluster dashboard with select data source](./img/import_dashboard_with_data_source.png)
+
+After your hit "Import" button, you will see the Redis Enterprise Cluster Dashboard like the following:
+![REC dashboard](./img/rec_dashboard.png)
+
+Repeat the above steps for Redis Enterprise Cluster Nodes - [node.json](./json/cluster.json) and Redis Enterprise Databases (BDB) - [database.json](./json/database.json).
 
 
