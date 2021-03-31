@@ -155,4 +155,9 @@ After your hit "Import" button, you will see the Redis Enterprise Cluster Dashbo
 
 Repeat the above steps for Redis Enterprise Cluster Nodes - [node.json](./json/cluster.json) and Redis Enterprise Databases (BDB) - [database.json](./json/database.json).
 
+You will see your Redis Enterprise Cluster Node dashboard like below:
+![REC node dashboard](./img/rec_node_dashboard.png)
+
+Similarly, you will see your Redis Enterprise Cluster Databases (BDB) dashboard as follows:
+![REC BDB dashboard](./img/rec_bdb_dashboard.png)
 
