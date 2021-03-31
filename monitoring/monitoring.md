@@ -11,7 +11,10 @@
 3. Install and configure Prometheus to ingest monitoring data from the subscription
 4. Install Grafana and configure monitoring dashboards
 
-### Set up firewal rules allowing SSH and traffic to Prometheus and Grafana
+#### Set up firewal rules allowing SSH and traffic to Prometheus and Grafana
 The firewall rules for your GCP project's VPC should look like the following:
 ![firewall rules](./img/firewall_rules.png)
 
+#### Create a VM in your GCP project to install Prometheus and Grafana
+First off, make sure your VM is in the VPC network peered with your Redis Enterprise for GCP MP subscription. See below.
+![monitoring vm](./img/monitoring_vm.png)
