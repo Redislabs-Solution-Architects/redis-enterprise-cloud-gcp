@@ -13,5 +13,5 @@
 
 ### Set up firewal rules allowing SSH and traffic to Prometheus and Grafana
 The firewall rules for your GCP project's VPC should look like the following:
-![firewall rules](./imgs/firewall_rules.png)
+![firewall rules](./img/firewall_rules.png)
 
