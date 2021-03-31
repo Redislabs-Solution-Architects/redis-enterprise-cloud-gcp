@@ -127,8 +127,8 @@ First, we need to configure data source for your subscription. In Grafana, do th
 ![Configure Data Sources](./img/config_data_sources.png) 
 
 Click "Add data source" button. Follow the screen below to enter your "Prometheus" data source for your subscription:
-![Configure data source](./img/data_source_added.png)
+![Configure data source](./img/redis_data_source_added.png)
 You will see the confirmation page like below:
-![Configure data source confirmation](./img/data_source_added_confirmation.png)
+![Configure data source confirmation](./img/redis_data_source_added_confirmation.png)
 
 
