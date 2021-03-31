@@ -6,10 +6,10 @@
 3. Network peering has been set up between your GCP project's VPC and the subscription project VPC
 
 ### Procedures
-1. Set up firewall rules allowing SSH and traffic to Prometheus and Grafana
-2. Create a VM in your GCP project to install Prometheus and Grafana 
-3. Install and configure Prometheus to ingest monitoring data from the subscription
-4. Install Grafana and configure monitoring dashboards
+* Set up firewall rules allowing SSH and traffic to Prometheus and Grafana
+* Create a VM in your GCP project to install Prometheus and Grafana 
+* Install and configure Prometheus to ingest monitoring data from the subscription
+* Install Grafana and configure monitoring dashboards
 
 #### Set up firewal rules allowing SSH and traffic to Prometheus and Grafana
 The firewall rules for your GCP project's VPC should look like the following:
@@ -72,8 +72,8 @@ The part that we need to replace the <cluster_name> in the configuration above i
 
 Run the rest of the command below to set up Prometheus for auto-start between reboots:
 ```
-$ sudo useradd -rs /bin/false prometheus
-$ sudo chown -R prometheus: /etc/prometheus /var/lib/prometheus
+$ useradd -rs /bin/false prometheus
+$ chown -R prometheus: /etc/prometheus /var/lib/prometheus
 ```
 Create a systemd unit file in /etc/systemd/system/prometheus.service with the following contents:
 ```
@@ -96,9 +96,9 @@ WantedBy=multi-user.target
 ```
 Reload systemd for changes to take effect:
 ```
-$ sudo systemctl daemon-reload
-$ sudo systemctl enable prometheus
-$ sudo systemctl start prometheus
+$ systemctl daemon-reload
+$ systemctl enable prometheus
+$ systemctl start prometheus
 ```
 
 You can now try to access your Prometheus using this URL: **http://<your_server_IP>:9090/**. This is how it looks like in a web browser below.  In my example, it would be http://35.227.157.107:9090
@@ -106,8 +106,24 @@ You can now try to access your Prometheus using this URL: **http://<your_server_
 Enter node_up in the Expression field. If Prometheus is connected to the Redis Enterprise cluster, the cluster metrics are shownlike the following:
 ![Prometheus node_up](./img/prometheus_node_up.png)
 
+3. Set up Grafana for Prometheus:
+```
+$ sudo su -
+$ wget https://s3-us-west-2.amazonaws.com/grafana-releases/release/grafana_5.0.4_amd64.deb
+$ apt-get install -y adduser libfontconfig
+$ dpkg -i grafana_5.0.4_amd64.deb
+$ systemctl daemon-reload && systemctl enable grafana-server && systemctl start grafana-server.service
+```
 
+You can now connect to it at http://your.server.ip:3000.  In our example, it would be http://35.227.157.107:3000 as shown below:
+![Grafana UI](./img/grafana_ui.png)
+Log in using username: **admin** & password: **admin**
+This is the screen it should look like after logging in the first time:
+![Grafana Logged In](./img/grafana_loggedin.png) 
 
-
+4. Create dashboards to monitor your subscription
+First, we need to configure data source for your subscription. In Grafana, do the followings:
+* Click the **Configuration (Gear icon)** and choose the **Data Sources** option:
+![Configure Data Sources](./img/config_data_sources.png) 
 
 
