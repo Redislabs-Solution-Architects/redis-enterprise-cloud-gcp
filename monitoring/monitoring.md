@@ -8,7 +8,7 @@
 ### Procedures
 * Set up firewall rules allowing SSH and traffic to Prometheus and Grafana
 * Create a VM in your GCP project to install Prometheus and Grafana 
-* Install and configure Prometheus to collect monitoring data from the subscription
+* Install and configure Prometheus to collect monitoring data from the subscription (using private endpoint)
 * Install Grafana and configure monitoring dashboards
 
 #### Set up firewal rules allowing SSH and traffic to Prometheus and Grafana
