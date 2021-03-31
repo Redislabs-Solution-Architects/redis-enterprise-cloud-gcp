@@ -128,7 +128,17 @@ First, we need to configure data source for your subscription. In Grafana, do th
 
 Click "Add data source" button. Follow the screen below to enter your "Prometheus" data source for your subscription:
 ![Configure data source](./img/redis_data_source_added.png)
-You will see the confirmation page like below:
+
+After clicking "Save & Test" button, You will see the confirmation page like below:
 ![Configure data source confirmation](./img/redis_data_source_added_confirmation.png)
+
+Next, select "+" and choose **Import** in the flyout:
+![Import Dashboard](./img/import.png)
+
+It will then land you on the following screen to load your JSON files for the following three dashboards.
+* Redis Enterprise Cluster [cluster.json](./json/cluster.json)
+* Redis Enterprise Cluster Nodes [node.json](./json/cluster.json)
+* Redis Enterprise Databases (BDB) [database.json](./json/database.json)
+![Load JSON](./img/load_json.png)
 
 
