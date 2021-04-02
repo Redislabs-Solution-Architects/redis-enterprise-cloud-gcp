@@ -66,18 +66,18 @@ scrape_configs:
     static_configs:
       - targets: ["<b>cluster_name</b>:8070"]
 </pre>
-Replace the <cluster_name> with the internal cluster name as shown below by going to one of the databases' configuration page and locate the **Private Endpoint**. 
+Replace the **cluster_name** with the internal cluster name as shown below by going to one of the databases' configuration page and locate the **Private Endpoint** field. 
 
 ![private_endpoint](./img/private_endpoint.png)
 
-The part that we need to replace the <cluster_name> in the configuration above is **internal.c13593.us-west1-mz.gcp.cloud.rlrcp.com** in our example.
+The part that we need to replace the **cluster_name** in the configuration above is **internal.c13593.us-west1-mz.gcp.cloud.rlrcp.com** in our example.
 
 Run the rest of the commands below to set up Prometheus for auto-start between reboots:
 ```
 $ useradd -rs /bin/false prometheus
 $ chown -R prometheus: /etc/prometheus /var/lib/prometheus
 ```
-Create a systemd unit file in /etc/systemd/system/prometheus.service with the following contents:
+Create a systemd unit file: /etc/systemd/system/prometheus.service with the following contents:
 ```
 [Unit]
 Description=Prometheus
@@ -105,7 +105,7 @@ $ systemctl start prometheus
 
 You can now try to access your Prometheus using this URL: **http://<your_server_IP>:9090/**. In our example, it would be http://35.227.157.107:9090
 
-Enter node_up in the Expression field. If Prometheus is connected to the Redis Enterprise cluster, the cluster metrics will be shown like the following:
+Enter **node_up** in the Expression field. If Prometheus is connected to the Redis Enterprise cluster, the cluster metrics will be shown like the following:
 
 ![Prometheus node_up](./img/prometheus_node_up.png)
 
@@ -121,26 +121,27 @@ $ systemctl daemon-reload && systemctl enable grafana-server && systemctl start 
 You can now connect to it at http://your.server.ip:3000.  In our example, it would be http://35.227.157.107:3000 as shown below:
 
 ![Grafana UI](./img/grafana_ui.png)
-Log in using username: **admin** & password: **admin**
+Log in using username: **admin** & password: **admin**.
 This is the screen it should look like after logging in the first time:
 
 ![Grafana Logged In](./img/grafana_loggedin.png) 
 
 4. Create dashboards to monitor your subscription
+
 First, we need to configure data source for your subscription. In Grafana, do the followings:
 * Click the **Configuration (Gear icon)** and choose the **Data Sources** option:
 
 ![Configure Data Sources](./img/config_data_sources.png) 
 
-Click "Add data source" button. Follow the screen below to enter your "Prometheus" data source for your subscription.  Be sure to check **Skip TLS Verification (Insecure)** option on the form.
+Click **"Add data source"** button. Follow the screen below to enter your "Prometheus" data source for your subscription.  Be sure to check **Skip TLS Verification (Insecure)** option in the form.
 
 ![Configure data source](./img/redis_data_source_added.png)
 
-After clicking "Save & Test" button, you will see the confirmation page like below:
+After clicking **"Save & Test"** button, you will see the confirmation page like below:
 
 ![Configure data source confirmation](./img/redis_data_source_added_confirmation.png)
 
-Next, select "+" and choose **Import** in the flyout:
+Next, select **"+"** sign and choose **Import** in the pop-up:
 
 ![Import Dashboard](./img/import.png)
 
@@ -151,11 +152,11 @@ It will then land you on the following screen to load your JSON files for the fo
 
 ![Load JSON](./img/load_json.png)
 
-Copy the content of [cluster.json](./json/cluster.json) to the "Or past JSON" textbox as shown below:
+Copy the content of [cluster.json](./json/cluster.json) to the **"Or paste JSON"** textbox as shown below:
 
 ![cluster.json](./img/cluster_json.png)
 
-Then click the "Load" button.  You will see the next screen as follows:
+Then click the **"Load"** button.  You will see the next screen as follows:
 
 ![Import cluster dashboard](./img/import_dashboard.png)
 
@@ -163,7 +164,7 @@ Enter a name for your Redis Enterprise Cluster dashboard for your subscription a
 
 ![Import cluster dashboard with select data source](./img/import_dashboard_with_data_source.png)
 
-After hitting the "Import" button, you will see the Redis Enterprise Cluster Dashboard like the following:
+After hitting the **"Import"** button, you will see the Redis Enterprise Cluster Dashboard like the following:
 
 ![REC dashboard](./img/rec_dashboard.png)
 
