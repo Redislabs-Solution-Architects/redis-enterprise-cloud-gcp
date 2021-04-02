@@ -3,12 +3,12 @@
 ### Prerequisites
 1. A subscription has been created through your GCP MP's Redis Enterprise purchase 
 2. One or more databases have been created in the subscription
-3. Network peering has been set up between your GCP project's VPC and the subscription project VPC
+3. Network peering has been set up between your GCP project's VPC and the subscription project's VPC
 
 ### Procedures
 * Set up firewall rules allowing SSH and traffic to Prometheus and Grafana
 * Create a VM in your GCP project to install Prometheus and Grafana 
-* Install and configure Prometheus to ingest monitoring data from the subscription
+* Install and configure Prometheus to collect monitoring data from the subscription (using private endpoint)
 * Install Grafana and configure monitoring dashboards
 
 #### Set up firewal rules allowing SSH and traffic to Prometheus and Grafana
@@ -30,7 +30,7 @@ $ mkdir /etc/prometheus /var/lib/prometheus
 $ mv prometheus-2.1.0.linux-amd64/consoles prometheus-2.1.0.linux-amd64/console_libraries /etc/prometheus
 $ rm -r prometheus-2.1.0.linux-amd64*
 ```
-2. Configure Prometheus
+2. Configure Prometheus  
 Create a file called /etc/prometheus/prometheus.yml with the following content.
 ```
 global:
@@ -66,11 +66,13 @@ scrape_configs:
     static_configs:
       - targets: ["<cluster_name>:8070"]
 ```
-Replace the <cluster_name> with the internal cluster name as shown below by going to one of the databases' configuration page and locate the Private Endpoint.
+Replace the <cluster_name> with the internal cluster name as shown below by going to one of the databases' configuration page and locate the **Private Endpoint**. 
+
 ![private_endpoint](./img/private_endpoint.png)
+
 The part that we need to replace the <cluster_name> in the configuration above is **internal.c13593.us-west1-mz.gcp.cloud.rlrcp.com** in our example.
 
-Run the rest of the command below to set up Prometheus for auto-start between reboots:
+Run the rest of the commands below to set up Prometheus for auto-start between reboots:
 ```
 $ useradd -rs /bin/false prometheus
 $ chown -R prometheus: /etc/prometheus /var/lib/prometheus
@@ -101,9 +103,10 @@ $ systemctl enable prometheus
 $ systemctl start prometheus
 ```
 
-You can now try to access your Prometheus using this URL: **http://<your_server_IP>:9090/**. This is how it looks like in a web browser below.  In my example, it would be http://35.227.157.107:9090
-![Prometheus UI](./img/prometheus_ui.png)
-Enter node_up in the Expression field. If Prometheus is connected to the Redis Enterprise cluster, the cluster metrics are shownlike the following:
+You can now try to access your Prometheus using this URL: **http://<your_server_IP>:9090/**. In our example, it would be http://35.227.157.107:9090
+
+Enter node_up in the Expression field. If Prometheus is connected to the Redis Enterprise cluster, the cluster metrics will be shown like the following:
+
 ![Prometheus node_up](./img/prometheus_node_up.png)
 
 3. Set up Grafana for Prometheus:
@@ -116,14 +119,61 @@ $ systemctl daemon-reload && systemctl enable grafana-server && systemctl start 
 ```
 
 You can now connect to it at http://your.server.ip:3000.  In our example, it would be http://35.227.157.107:3000 as shown below:
+
 ![Grafana UI](./img/grafana_ui.png)
 Log in using username: **admin** & password: **admin**
 This is the screen it should look like after logging in the first time:
+
 ![Grafana Logged In](./img/grafana_loggedin.png) 
 
 4. Create dashboards to monitor your subscription
 First, we need to configure data source for your subscription. In Grafana, do the followings:
 * Click the **Configuration (Gear icon)** and choose the **Data Sources** option:
+
 ![Configure Data Sources](./img/config_data_sources.png) 
 
+Click "Add data source" button. Follow the screen below to enter your "Prometheus" data source for your subscription.  Be sure to check **Skip TLS Verification (Insecure)** option on the form.
+
+![Configure data source](./img/redis_data_source_added.png)
+
+After clicking "Save & Test" button, you will see the confirmation page like below:
+
+![Configure data source confirmation](./img/redis_data_source_added_confirmation.png)
+
+Next, select "+" and choose **Import** in the flyout:
+
+![Import Dashboard](./img/import.png)
+
+It will then land you on the following screen to load your JSON files for the following three dashboards.
+* Redis Enterprise Cluster - [cluster.json](./json/cluster.json)
+* Redis Enterprise Cluster Nodes - [node.json](./json/cluster.json)
+* Redis Enterprise Databases (BDB) - [database.json](./json/database.json)
+
+![Load JSON](./img/load_json.png)
+
+Copy the content of [cluster.json](./json/cluster.json) to the "Or past JSON" textbox as shown below:
+
+![cluster.json](./img/cluster_json.png)
+
+Then click the "Load" button.  You will see the next screen as follows:
+
+![Import cluster dashboard](./img/import_dashboard.png)
+
+Enter a name for your Redis Enterprise Cluster dashboard for your subscription and select the your Prometheus data source:
+
+![Import cluster dashboard with select data source](./img/import_dashboard_with_data_source.png)
+
+After hitting the "Import" button, you will see the Redis Enterprise Cluster Dashboard like the following:
+
+![REC dashboard](./img/rec_dashboard.png)
+
+Repeat the above steps for Redis Enterprise Cluster Nodes - [node.json](./json/cluster.json) and Redis Enterprise Databases (BDB) - [database.json](./json/database.json).
+
+You will see your Redis Enterprise Cluster Node dashboard like below:
+
+![REC node dashboard](./img/rec_node_dashboard.png)
+
+Similarly, you will see your Redis Enterprise Cluster Databases (BDB) dashboard as follows:
+
+![REC BDB dashboard](./img/rec_bdb_dashboard.png)
 
