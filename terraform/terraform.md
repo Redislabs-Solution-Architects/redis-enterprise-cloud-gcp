@@ -10,6 +10,7 @@ You will find two terraform scripts one for each way of consumption in this repo
 
 The following links provide additional information w.r.t Redis Enterprise Cloud's Terraform provider
 1. The github [repo](https://github.com/RedisLabs/terraform-provider-rediscloud) for the Redis Enterprise Cloud's Terraform provider
-2. The Redis Enterprise Cloud's Terraform Provider [listing](https://registry.terraform.io/providers/RedisLabs/rediscloud/latest) in official Terraform Registry
-3. A [blog](https://redislabs.com/blog/provision-manage-redis-enterprise-cloud-hashicorp-terraform/) written by a Redis Labs' product manager demonstrating an example of how to use the Redis Enterprise Cloud's Terraform provider.
+2. The Redis Enterprise Cloud's Terraform Provider [listing](https://registry.terraform.io/providers/RedisLabs/rediscloud/latest) in the official Terraform Registry
+3. The official documentation for the Redis Enterprise Cloud's Terraform Provider is [here](https://registry.terraform.io/providers/RedisLabs/rediscloud/latest/docs)
+4. A [blog](https://redislabs.com/blog/provision-manage-redis-enterprise-cloud-hashicorp-terraform/) written by a Redis Labs' product manager demonstrating an example of how to use the Redis Enterprise Cloud's Terraform provider.
 
