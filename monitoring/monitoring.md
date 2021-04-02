@@ -32,7 +32,7 @@ $ rm -r prometheus-2.1.0.linux-amd64*
 ```
 2. Configure Prometheus  
 Create a file called /etc/prometheus/prometheus.yml with the following content.
-```
+<pre>
 global:
   scrape_interval: 15s
   evaluation_interval: 15s
@@ -64,8 +64,8 @@ scrape_configs:
     tls_config:
       insecure_skip_verify: true
     static_configs:
-      - targets: ["<cluster_name>:8070"]
-```
+      - targets: ["<b><cluster_name><b>:8070"]
+</pre>
 Replace the <cluster_name> with the internal cluster name as shown below by going to one of the databases' configuration page and locate the **Private Endpoint**. 
 
 ![private_endpoint](./img/private_endpoint.png)
