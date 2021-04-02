@@ -1,4 +1,6 @@
 #
+# Provision for GCP MP subscription
+#
 # Set the following variables in your shell environment:
 # export GOOGLE_APPLICATION_CREDENTIALS=<your Google APIs credentials>
 # export REDISCLOUD_ACCESS_KEY=<your Redis Enterrpise Cloud api access key>
@@ -22,12 +24,6 @@ terraform {
  }
 }
 
-# Provide your credit card details
-data "rediscloud_payment_method" "card" {
- card_type = "Visa"
- last_four_numbers = "1234"
-}
- 
 # Generates a random password for the database
 resource "random_password" "passwords" {
  count = 2
@@ -40,7 +36,6 @@ resource "random_password" "passwords" {
  
 resource "rediscloud_subscription" "example" {
  name = "gilbert-demo-tf-subscription"
- payment_method_id = data.rediscloud_payment_method.card.id
  memory_storage = "ram"
  
  cloud_provider {
@@ -69,7 +64,7 @@ resource "rediscloud_subscription" "example" {
 }
 
 data "google_compute_network" "network" {
-  project = "my-project-id"
+  project = "my-gcp-project-id"
   name = "my-vpc-network"
 }
 
