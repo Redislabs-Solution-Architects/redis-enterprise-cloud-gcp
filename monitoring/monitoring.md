@@ -64,7 +64,7 @@ scrape_configs:
     tls_config:
       insecure_skip_verify: true
     static_configs:
-      - targets: ["<b><cluster_name></b>:8070"]
+      - targets: ["<b>cluster_name</b>:8070"]
 </pre>
 Replace the <cluster_name> with the internal cluster name as shown below by going to one of the databases' configuration page and locate the **Private Endpoint**. 
 
