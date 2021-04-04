@@ -45,8 +45,7 @@ Now, set up glau-replica-db-east-1 as the second replica of the glau-master-db. 
 After hitting **OK** (disk icon) button, the following screen will appear:
 ![Second Peering](./img/second-peering.png)
 
-Then proceed to press the "Update" button to complete the operation. If the request was successful, it will show the status in t
-he **Replica Of** field as follows:
+Then proceed to press the "Update" button to complete the operation. If the request was successful, it will show the status in the **Replica Of** field as follows:
 ![Second replica success](./img/second-replica-success.png)
 
 Finally, run "set foo bar" command on the glau-master-db and see the data being replicated to the two replicas as shown below:
