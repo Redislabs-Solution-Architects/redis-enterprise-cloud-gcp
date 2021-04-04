@@ -49,8 +49,6 @@ Then proceed to press the "Update" button to complete the operation. If the requ
 he **Replica Of** field as follows:
 ![Second replica success](./img/second-replica-success.png)
 
-
-
-
-
+Finally, run "set foo bar" command on the glau-master-db and see the data being replicated to the two replicas as shown below:
+![replication](./img/active-passive-geo-replication.png)
 
