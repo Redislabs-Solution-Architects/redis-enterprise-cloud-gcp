@@ -6,7 +6,7 @@ Setup topology:
 * One read-only replica database in us-east1
 * Make sure each of the subscription does not have overlapping deployment CIDR ranges
 
-Master r/w databse (namely glau-master-db)configuration:
+Master r/w databse (namely glau-master-db) configuration:
 * GCP Region: us-central1
 * Size 1 GB RAM only
 * Replication: Yes
@@ -28,7 +28,7 @@ Below are the three GCP Marketplace subscriptions for each of the regional deplo
 ![GCP MP subscriptions](./img/gcp-mp-subscriptions.png)
 
 Below are the databases for the Active-Passive Geo Distribution Setup:
-![Active Passive Geo Distributed databases](active-passive-geo-dbs.png)
+![Active Passive Geo Distributed databases](./img/active-passive-geo-dbs.png)
 
 Set up glau-replica-db-west-1 as the first replica of the glau-master-db.  Select glau-master-db (using internal IP address) from the drop-down listbox as follows:
 ![First replica db](./img/first-replica-west.png)
