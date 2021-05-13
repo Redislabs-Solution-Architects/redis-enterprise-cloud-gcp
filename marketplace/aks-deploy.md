@@ -108,10 +108,9 @@ kubectl get secret ${SECRET_NAME} -o jsonpath='{$.data.token}' | base64 --decode
 ```
 Use the output (bearer token) from the above command to log the cluster into GCP
 ![login AKS](./img/login-aks.png)
----
+
 You should see the attached AKS cluster now in a healthy state
 ![AKS Auth 1](./img/aks-cluster-auth-1.png)
----
 ![AKS Auth 2](./img/aks-cluster-auth-2.png)
 ---
 
@@ -160,7 +159,7 @@ kubectl create secret docker-registry $IMAGEPULLSECRET_NAME \
 kubectl annotate namespace $NAMESPACE marketplace.cloud.google.com/imagePullSecret=$IMAGEPULLSECRET_NAME
 ```
 You would repeat this step for any additional K8 namespace to deploy Redis Enterprise on GKE via GCP Marketplace
-
+---
 
 #### 6. Deploy Redis Enterprise on GKE via GCP Marketplace on your designated K8 namespace
 
