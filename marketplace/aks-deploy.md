@@ -26,7 +26,6 @@ az aks create \
 --node-vm-size standard_d4_v2 \
 --generate-ssh-keys
 ```
----
 
 #### 2. Register the AKS cluster as attached Kubernetes cluster
 Create a GCP service account with relevant roles to attach the cluster to GCP
@@ -142,7 +141,6 @@ kubectl create secret docker-registry $IMAGEPULLSECRET_NAME \
 
 kubectl patch sa default -n application-system -p '"imagePullSecrets": [{"name": "gcr-json-key" }]'
 ```
----
 
 #### 5. Configure the attached AKS cluster to allow images on Marketplace's GCR being pulled from your deployment K8 namespace
 ```
@@ -159,13 +157,12 @@ kubectl create secret docker-registry $IMAGEPULLSECRET_NAME \
 kubectl annotate namespace $NAMESPACE marketplace.cloud.google.com/imagePullSecret=$IMAGEPULLSECRET_NAME
 ```
 You would repeat this step for any additional K8 namespace to deploy Redis Enterprise on GKE via GCP Marketplace
----
+
 
 #### 6. Deploy Redis Enterprise on GKE via GCP Marketplace on your designated K8 namespace
 
 Follow the on-screen instructions below to deploy Redis Enterprise on GKE via GCP Marketplace
 ![RE GKE purchase](./img/re-gke-purchase.png)
----
 ![RE GKE subscribe](./img/re-gke-subscribe.png)
 ---
 ![RE GKE purchase success](./img/re-gke-purchase-success.png)
