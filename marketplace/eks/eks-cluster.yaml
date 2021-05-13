@@ -1,0 +1,13 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: glau-eks-cluster-3n-m5-2xl
+  region: us-east-1
+nodeGroups:
+  - name: ng-1
+    instanceType: m5.2xlarge
+    desiredCapacity: 3
+    ssh:
+      allow: true # will use ~/.ssh/id_rsa.pub as the default ssh key
+
+
