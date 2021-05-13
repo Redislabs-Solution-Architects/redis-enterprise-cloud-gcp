@@ -161,11 +161,18 @@ You would repeat this step for any additional K8 namespace to deploy Redis Enter
 #### 6. Deploy Redis Enterprise on GKE via GCP Marketplace on your designated K8 namespace
 Follow the on-screen instructions below to deploy Redis Enterprise on GKE via GCP Marketplace
 ![RE GKE purchase](./img/re-gke-purchase.png)
+---
 ![RE GKE subscribe](./img/re-gke-subscribe.png)
+---
 ![RE GKE purchase success](./img/re-gke-purchase-success.png)
+---
 ![RE GKE ready to deploy](./img/re-gke-ready-deploy.png)
+---
 ![RE GKE deploy](./img/re-gke-deploy.png)
+---
 ![RE GKE deploy success 1](./img/re-gke-deploy-success-1.png)
+---
 ![RE GKE deploy success 2](./img/re-gke-deploy-success-2.png)
+---
 ![RE GKE deploy success 3](./img/re-gke-deploy-success-3.png)
 
