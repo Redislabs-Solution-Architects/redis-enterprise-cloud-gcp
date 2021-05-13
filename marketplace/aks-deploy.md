@@ -62,9 +62,9 @@ gcloud container hub memberships register glau-aks-cluster \
 --service-account-key-file=./anthos-hub-svc.json
 ``` 
 
-You should see your newly brought AKS cluster with critcal status below.  Once it is authenticated in step 3, the ASK cluster will turn into healthy state.
+You should see your newly brought AKS cluster with critcal status below.  Once it is authenticated in step 3, the AKS cluster will turn into healthy state.
 ![Just In](./img/aks-cluster-just-in.png)
----
+
 
 #### 3. Authenticate the attached AKS cluster using bearer token
 Create and apply the cloud-console-reader RBAC role
