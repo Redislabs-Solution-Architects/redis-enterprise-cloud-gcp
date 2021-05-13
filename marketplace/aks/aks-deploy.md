@@ -175,4 +175,6 @@ Follow the on-screen instructions below to deploy Redis Enterprise on GKE via GC
 ![RE GKE deploy success 2](./img/re-gke-deploy-success-2.png)
 ---
 ![RE GKE deploy success 3](./img/re-gke-deploy-success-3.png)
-
+---
+This is what is shown in Azure portal
+![AKS side](./img/aks-side.png)
