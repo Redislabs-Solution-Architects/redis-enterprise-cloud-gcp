@@ -26,6 +26,7 @@ az aks create \
 --node-vm-size standard_d4_v2 \
 --generate-ssh-keys
 ```
+---
 
 #### 2. Register the AKS cluster as attached Kubernetes cluster
 Create a GCP service account with relevant roles to attach the cluster to GCP
@@ -63,7 +64,7 @@ gcloud container hub memberships register glau-aks-cluster \
 
 You should see your newly brought AKS cluster with critcal status below.  Once it is authenticated in step 3, the ASK cluster will turn into healthy state.
 ![Just In](./img/aks-cluster-just-in.png)
-
+---
 
 #### 3. Authenticate the attached AKS cluster using bearer token
 Create and apply the cloud-console-reader RBAC role
@@ -107,10 +108,12 @@ kubectl get secret ${SECRET_NAME} -o jsonpath='{$.data.token}' | base64 --decode
 ```
 Use the output (bearer token) from the above command to log the cluster into GCP
 ![login AKS](./img/login-aks.png)
+---
 You should see the attached AKS cluster now in a healthy state
 ![AKS Auth 1](./img/aks-cluster-auth-1.png)
+---
 ![AKS Auth 2](./img/aks-cluster-auth-2.png)
-
+---
 
 #### 4. Configure the attached AKS cluster to pull images from Google Container Registry (GCR)
 Create a service account to pull images from GCR
@@ -140,6 +143,7 @@ kubectl create secret docker-registry $IMAGEPULLSECRET_NAME \
 
 kubectl patch sa default -n application-system -p '"imagePullSecrets": [{"name": "gcr-json-key" }]'
 ```
+---
 
 #### 5. Configure the attached AKS cluster to allow images on Marketplace's GCR being pulled from your deployment K8 namespace
 ```
