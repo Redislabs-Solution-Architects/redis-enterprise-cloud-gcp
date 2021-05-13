@@ -60,14 +60,14 @@ gcloud container hub memberships register <MEMBERSHIP-NAME> \
 --service-account-key-file=<SERVICE-ACCOUNT-KEY-PATH>
 
 For example,
-gcloud container hub memberships register glau-aks-cluster \
---context=glau-aks-cluster-3n \
+gcloud container hub memberships register glau-eks-cluster \
+--context=gilbert.sales@glau-eks-cluster-3n-m5-2xl.us-east-1.eksctl.io \
 --kubeconfig=/Users/gilbertlau/.kube/config \
 --service-account-key-file=./anthos-hub-svc.json
 ``` 
 
 You should see your newly brought EKS cluster with critcal status below.  Once it is authenticated in step 3, the EKS cluster will turn into healthy state.
-![Just In](./img/aks-cluster-just-in.png)
+![Just In](./img/eks-critical.png)
 
 
 #### 3. Authenticate the attached EKS cluster using bearer token
@@ -111,11 +111,10 @@ SECRET_NAME=$(kubectl get serviceaccount ksa-aks-sa-1 -o jsonpath='{$.secrets[0]
 kubectl get secret ${SECRET_NAME} -o jsonpath='{$.data.token}' | base64 --decode
 ```
 Use the output (bearer token) from the above command to log the cluster into GCP
-![login EKS](./img/login-aks.png)
+![login EKS](./img/eks-bearer-token.png)
 
 You should see the attached EKS cluster now in a healthy state
-![EKS Auth 1](./img/aks-cluster-auth-1.png)
-![EKS Auth 2](./img/aks-cluster-auth-2.png)
+![login EKS 2](./img/eks-bearer-token-entered.png)
 
 
 #### 4. Configure the attached EKS cluster to pull images from Google Container Registry (GCR)
@@ -173,11 +172,11 @@ Follow the on-screen instructions below to deploy Redis Enterprise on GKE via GC
 ---
 ![RE GKE ready to deploy](./img/re-gke-ready-deploy.png)
 ---
-![RE GKE deploy](./img/re-gke-deploy.png)
+![RE GKE deploy](./img/re-gke-eks-deploy.png)
 ---
-![RE GKE deploy success 1](./img/re-gke-deploy-success-1.png)
+![RE GKE deploy success 1](./img/re-gke-eks-deploy-success-1.png)
 ---
-![RE GKE deploy success 2](./img/re-gke-deploy-success-2.png)
+![RE GKE deploy success 2](./img/re-gke-eks-deploy-success-2.png)
 ---
-![RE GKE deploy success 3](./img/re-gke-deploy-success-3.png)
+![RE GKE deploy success 3](./img/re-gke-eks-deploy-success-3.png)
 
