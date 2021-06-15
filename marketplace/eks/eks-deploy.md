@@ -1,4 +1,4 @@
-## How to deploy Redis Enterprise on GKE vi GCP Marketplace to an Anthos attached EKS cluster
+## How to deploy Redis Enterprise on GKE via GCP Marketplace to an Anthos attached EKS cluster
 
 ### High Level Workflow
 The following is the high level workflow which you will follow:
