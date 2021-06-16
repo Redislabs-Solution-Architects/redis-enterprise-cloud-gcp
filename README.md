@@ -8,3 +8,7 @@ This repo contains anything about fully managed Redis Enterprise DBaaS on Google
 * Setting up Active-Passive Geo Distribution between fully managed Redis Enterprise DBaaS subscriptions
 * Deployment of Redis Enterprise via GCP Marketplace
 * Accessing a Redis Enterprise database from outside a GKE cluster
+
+
+
+Redis Labs proprietary, subject to the Redis Enterprise Software and/or Cloud Services license
