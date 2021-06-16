@@ -7,4 +7,4 @@ This repo contains anything about fully managed Redis Enterprise DBaaS on Google
 * Monitoring a fully managed Redis Enterprise DBaaS subscription using Promethues/Grafana
 * Setting up Active-Passive Geo Distribution between fully managed Redis Enterprise DBaaS subscriptions
 * Deployment of Redis Enterprise via GCP Marketplace
-
+* Accessing a Redis Enterprise database from outside a GKE cluster

@@ -1,0 +1,9 @@
+apiVersion: app.redislabs.com/v1alpha1
+kind: RedisEnterpriseDatabase
+metadata:
+  name: redis-enterprise-database
+spec:
+  memorySize: 100MB
+  tlsMode: enabled 
+  clientAuthenticationCertificates:
+  - client-auth-secret-redb
