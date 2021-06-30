@@ -150,7 +150,6 @@ Log in using demo@redislabs.com and the password collected above to view the clu
 
 
 #### 8. Create a Redis Enterprise database instance without SSL/TLS enabled
-```
 Deploy a Redis Enterprise database:
 ```
 kubectl apply -f - <<EOF
