@@ -256,7 +256,7 @@ Run test.py to verify the database connection:
 python test.py ${INGRESS_HOST} ${DB_PORT} <redis-enterprise-database-password>
 
 For example,
-python test.py 34.83.49.103 16667 QUhZiDXB 
+python test.py 34.83.49.103 13813 QUhZiDXB 
 ```
 It should produce output about the Redis Enterprise database's information as follows:
 ![bdb info output](./img/test-py.png)
