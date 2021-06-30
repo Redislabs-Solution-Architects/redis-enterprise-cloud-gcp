@@ -9,17 +9,16 @@ The following is the high level workflow which you will follow:
 5. Deploy a Redis Enterprise Cluster (REC)
 6. Deploy Ingress Gateway and Create routes for Redis Enterprise Cluster's HTTPS web access
 7. Access Redis Enterprise Cluster's console
-8. Generate a SSL certificate for the Redis Enterprise database
-9. Create a Redis Enterprise database instance with SSL/TLS enabled
-10. Update Ingress Gateway to include Redis Enterprise Database instance
-11. Verify SSL/TLS connection using openssl
-12. Connect to the Redis Enterprise database over SSL/TLS via a Python program
+8. Create a Redis Enterprise database instance without SSL/TLS enabled
+9. Update Ingress Gateway to include Redis Enterprise Database instance
+10. Add a custom port for Redis Enterprise database connection to default ingress gateway
+11. Connect to the Redis Enterprise database via a Python program
 
 
-#### 1. Clone this repo 
+#### 1. Clone this repo
 ```
 git clone https://github.com/Redislabs-Solution-Architects/redis-enterprise-cloud-gcp
-cd redis-enterprise-asm-ingress/gke/access-via-asm-ingress
+cd redis-enterprise-asm-ingress/gke/access-via-asm-non-tls
 ```
 
 
@@ -150,27 +149,7 @@ Log in using demo@redislabs.com and the password collected above to view the clu
 
 
 
-#### 8. Generate a SSL certificate for the Redis Enterprise database
-```
-openssl genrsa -out client.key 2048
-```
-When running the following command, just hit ENTER for every question except to enter *.rec.&lt;$INGRESS_HOST&gt;.nip.io for Common Name`:
-```
-openssl req -new -x509 -key client.key -out client.cert -days 1826
-```
-Copy the content of proxy_cert.pem from one of the REC pods to your machine running **openssl** command later:
-```
-kubectl exec -it rec-0 -c redis-enterprise-node -n redis -- /bin/bash
-cd /etc/opt/redislabs
-more proxy_cert.pem
-```
-
-
-#### 9. Create a Redis Enterprise database instance with SSL/TLS enabled
-Generate a K8 secret for the SSL/TLS certificate:
-```
-cp client.cert cert
-kubectl create secret generic client-auth-secret-redb --from-file=./cert -n redis
+#### 8. Create a Redis Enterprise database instance without SSL/TLS enabled
 ```
 Deploy a Redis Enterprise database:
 ```
@@ -182,13 +161,11 @@ metadata:
   name: redis-enterprise-database
 spec:
   memorySize: 100MB
-  tlsMode: enabled
-  clientAuthenticationCertificates:
-  - client-auth-secret-redb
 EOF
 ```
 
-#### 10. Update Ingress Gateway to include Redis Enterprise Database instance
+
+#### 9. Update Ingress Gateway to include Redis Enterprise Database instance
 Define gateway for SSL access:
 ```
 export INGRESS_HOST=$(kubectl -n istio-system get service istio-ingressgateway \
@@ -215,6 +192,11 @@ spec:
       mode: PASSTHROUGH
     hosts:
     - rec-ui.${INGRESS_HOST}.nip.io
+  - port:
+      number: ${DB_PORT}
+      name: redis
+      protocol: TCP
+    hosts:
     - redis-${DB_PORT}.demo.rec.${INGRESS_HOST}.nip.io
 EOF
 ```
@@ -230,11 +212,9 @@ spec:
   - redis-${DB_PORT}.demo.rec.${INGRESS_HOST}.nip.io
   gateways:
   - redis-gateway
-  tls:
+  tcp:
   - match:
-    - port: ${SECURE_INGRESS_PORT}
-      sniHosts:
-      - redis-${DB_PORT}.demo.rec.${INGRESS_HOST}.nip.io
+    - port: ${DB_PORT}
     route:
     - destination:
         host: redis-enterprise-database
@@ -244,31 +224,35 @@ EOF
 ```
 
 
-#### 11. Verify SSL/TLS connection using openssl
+#### 10. Add a custom port for Redis Enterprise database connection to default ingress gateway
+```
+kubectl edit svc istio-ingressgateway -n istio-system
+```
+Add the following next to other port definitions:
+```
+- name: redis-port
+  nodePort: <node-port-of-your-choice>
+  port: <replace with ${DB_PORT}>
+  protocol: TCP
+  targetPort: <replace with ${DB_PORT}>
+
+For example,
+- name: redis-port
+  nodePort: 31402
+  port: 13813
+  protocol: TCP
+  targetPort: 13813
+```
+
+
+
+#### 11. Connect to the Redis Enterprise database via a Python program
 Grab the password of the Redis Enterprise database:
 ```
 kubectl get secrets -n redis redb-redis-enterprise-database \
 -o jsonpath="{.data.password}" | base64 --decode
 ```
-Run the following to open a SSL session:
-```
-openssl s_client -connect redis-${DB_PORT}.demo.rec.${INGRESS_HOST}.nip.io:${SECURE_INGRESS_PORT} \
--key client.key -cert client.cert -CAfile ./proxy_cert.pem \
--servername redis-${DB_PORT}.demo.rec.${INGRESS_HOST}.nip.io
-
-For example,
-openssl s_client -connect redis-11338.demo.rec.34.127.23.12.nip.io:443 \
--key client.key -cert client.cert -CAfile ./proxy_cert.pem \
--servername redis-11338.demo.rec.34.127.23.12.nip.io
-``` 
-You should see a similar output as follows. Replace &lt;redis-enterprise-database-password&gt; with your Redis Enterprise database instance's password. Make sure there is a space after the password on MacOS. See below:
-![openssl auth](./img/openssl_auth.png)
-Send a **PING** command by entering PING followed by a blank space before hitting the **RETURN** button:  
-![openssl ping](./img/openssl_auth_ping.png)
-
-
-#### 12. Connect to the Redis Enterprise database over SSL/TLS via a Python program
-Run test.py to verify SSL/TLS connection:
+Run test.py to verify the database connection:
 ```
 python test.py ${INGRESS_HOST} ${DB_PORT} <redis-enterprise-database-password>
 
