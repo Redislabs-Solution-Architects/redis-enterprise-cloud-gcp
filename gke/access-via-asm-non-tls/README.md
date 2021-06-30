@@ -1,4 +1,4 @@
-# Accessing a Redis Enterprise database from outside a GKE cluster (Through Anthos Service Mesh Ingress )
+# Accessing a non-TLS Redis Enterprise database from outside a GKE cluster (Through Anthos Service Mesh Ingress)
 
 ## High Level Workflow
 The following is the high level workflow which you will follow:
