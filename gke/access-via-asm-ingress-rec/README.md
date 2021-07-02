@@ -215,6 +215,6 @@ curl -v -k -u demo@redislabs.com:${REC_PASSWORD} -H "Content-Type: application/j
        -X GET https://rec-api.${INGRESS_HOST}.nip.io:${SECURE_INGRESS_PORT}/v1/users
 ```  
 You should see a similar output like below:
-[REC REST API](./img/rec_rest_api_v1.png)
+![REC REST API](./img/rec_rest_api_v1.png)
 
 
