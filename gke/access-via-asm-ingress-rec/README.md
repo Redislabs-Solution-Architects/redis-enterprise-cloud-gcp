@@ -11,7 +11,7 @@ The following is the high level workflow which you will follow:
 7. Access Redis Enterprise Cluster's console
 8. Update Ingress Gateway and Create routes for Redis Enterprise Cluster's API endpoint access
 9. Verify the setup by issuing a curl REST API command
-
+10. **Bonus:** Password rotation example via REST API
 
 
 #### 1. Clone this repo
@@ -217,4 +217,27 @@ curl -v -k -u demo@redislabs.com:${REC_PASSWORD} -H "Content-Type: application/j
 You should see a similar output like below:
 ![REC REST API](./img/rec_rest_api_v1.png)
 
+
+
+#### 10. **Bonus:** Password rotation example via REST API
+Assuming you have created a user "gilbert.lau@redislabs.com" and the password is "redis2":
+```
+export INGRESS_HOST=$(kubectl -n istio-system get service istio-ingressgateway \
+       -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+export SECURE_INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway \
+       -o jsonpath='{.spec.ports[?(@.name=="https")].port}')
+export REC_PASSWORD=$(kubectl get secrets -n redis \
+       rec -o jsonpath="{.data.password}" | base64 --decode)
+
+curl -k -v -u demo@redislabs.com:${REC_PASSWORD} \
+-H "content-type: application/json" \
+ -X POST https://rec-api.${INGRESS_HOST}.nip.io:${SECURE_INGRESS_PORT}/v1/users/password \
+-d '{"username":"gilbert.lau@redislabs.com", "old_password":"redis2", "new_password":"redis6"}' 
+```
+  
+Run the following to verify the newly created password for gilbert.lau@redislabs.com user:
+```
+curl -v -k -u gilbert.lau@redislabs.com:redis6 -H "Content-Type: application/json" \
+       -X GET https://rec-api.${INGRESS_HOST}.nip.io:${SECURE_INGRESS_PORT}/v1/users
+```
 
