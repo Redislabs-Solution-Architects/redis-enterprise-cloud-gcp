@@ -12,7 +12,7 @@ export DB_PORT_2=$(kubectl get secrets -n redis redb-redis-enterprise-database-2
        -o jsonpath="{.data.port}" | base64 --decode)
 ```
    
-Gateway definition:
+Gateway definition:  
 Assuming TLS/SSL certificate's common name in this form: *.rec.&lt;${INGRESS_HOST}&gt;.nip.io
 ```
 kubectl apply -f - <<EOF
