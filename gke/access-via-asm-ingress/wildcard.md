@@ -1,4 +1,5 @@
-#### Example for wildcard entry definition for multiple Redis Enterprise databases:
+### Example for wildcard entry definition for multiple Redis Enterprise databases:
+  
 Assuming there are two databases namely redis-enterprise-database and redis-enterprise-database-2:
 ```
 export INGRESS_HOST=$(kubectl -n istio-system get service istio-ingressgateway \
@@ -10,8 +11,9 @@ export DB_PORT=$(kubectl get secrets -n redis redb-redis-enterprise-database \
 export DB_PORT_2=$(kubectl get secrets -n redis redb-redis-enterprise-database-2 \
        -o jsonpath="{.data.port}" | base64 --decode)
 ```
-  
+   
 Gateway definition:
+Assuming TLS/SSL certificate's common name in this form: *.rec.&lt;${INGRESS_HOST}&gt;.nip.io
 ```
 kubectl apply -f - <<EOF
 apiVersion: networking.istio.io/v1alpha3

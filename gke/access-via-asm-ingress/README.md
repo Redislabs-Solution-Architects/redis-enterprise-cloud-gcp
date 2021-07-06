@@ -154,7 +154,7 @@ Log in using demo@redislabs.com and the password collected above to view the clu
 ```
 openssl genrsa -out client.key 2048
 ```
-When running the following command, just hit ENTER for every question except to enter *.rec.&lt;$INGRESS_HOST&gt;.nip.io for Common Name`:
+When running the following command, just hit ENTER for every question except to enter *.rec.&lt;$INGRESS_HOST&gt;.nip.io for Common Name:
 ```
 openssl req -new -x509 -key client.key -out client.cert -days 1826
 ```
