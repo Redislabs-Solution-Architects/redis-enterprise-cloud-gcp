@@ -45,7 +45,7 @@ spec:
   hosts:
   - "*.demo.rec.${INGRESS_HOST}.nip.io"
   gateways:
-  - redis-gateway
+  - redis-gateway-wc
   tls:
   - match:
     - port: ${SECURE_INGRESS_PORT}
