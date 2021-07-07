@@ -13,7 +13,7 @@ export DB_PORT_2=$(kubectl get secrets -n redis redb-redis-enterprise-database-2
 ```
    
 Gateway definition:  
-Assuming TLS/SSL certificate's common name in this form: *.rec.&lt;${INGRESS_HOST}&gt;.nip.io
+Assuming TLS/SSL certificate's common name is in this form: *.rec.&lt;${INGRESS_HOST}&gt;.nip.io
 ```
 kubectl apply -f - <<EOF
 apiVersion: networking.istio.io/v1alpha3
