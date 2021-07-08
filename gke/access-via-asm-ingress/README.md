@@ -93,7 +93,7 @@ kubectl apply -f - <<EOF
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
-  name: redis-gateway
+  name: redis-ui-gateway
 spec:
   selector:
     istio: ingressgateway # use istio default ingress gateway
@@ -114,12 +114,12 @@ kubectl apply -f - <<EOF
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: rec
+  name: redis-ui-service
 spec:
   hosts:
   - rec-ui.${INGRESS_HOST}.nip.io
   gateways:
-  - redis-gateway
+  - redis-ui-gateway
   tls:
   - match:
     - port: ${SECURE_INGRESS_PORT}
@@ -202,7 +202,7 @@ kubectl apply -f - <<EOF
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
-  name: redis-gateway
+  name: redis-db-${DB_PORT}-gateway
 spec:
   selector:
     istio: ingressgateway # use istio default ingress gateway
@@ -214,7 +214,6 @@ spec:
     tls:
       mode: PASSTHROUGH
     hosts:
-    - rec-ui.${INGRESS_HOST}.nip.io
     - redis-${DB_PORT}.demo.rec.${INGRESS_HOST}.nip.io
 EOF
 ```
@@ -224,12 +223,12 @@ kubectl apply -f - <<EOF
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: redis-${DB_PORT}
+  name: redis-${DB_PORT}-service
 spec:
   hosts:
   - redis-${DB_PORT}.demo.rec.${INGRESS_HOST}.nip.io
   gateways:
-  - redis-gateway
+  - redis-db-${DB_PORT}-gateway
   tls:
   - match:
     - port: ${SECURE_INGRESS_PORT}

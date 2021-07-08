@@ -19,7 +19,7 @@ kubectl apply -f - <<EOF
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
-  name: redis-gateway-wc
+  name: redis-db-gateway-wc
 spec:
   selector:
     istio: ingressgateway # use istio default ingress gateway
@@ -41,12 +41,12 @@ kubectl apply -f - <<EOF
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
-  name: redis-vs
+  name: redis-db-service
 spec:
   hosts:
   - "*.demo.rec.${INGRESS_HOST}.nip.io"
   gateways:
-  - redis-gateway-wc
+  - redis-db-gateway-wc
   tls:
   - match:
     - port: ${SECURE_INGRESS_PORT}
