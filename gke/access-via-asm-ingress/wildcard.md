@@ -31,7 +31,6 @@ spec:
     tls:
       mode: PASSTHROUGH
     hosts:
-    - rec-ui.${INGRESS_HOST}.nip.io
     - "*.demo.rec.${INGRESS_HOST}.nip.io"
 EOF
 ```
