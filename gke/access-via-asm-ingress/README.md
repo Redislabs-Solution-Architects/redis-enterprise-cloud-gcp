@@ -160,9 +160,7 @@ openssl req -new -x509 -key client.key -out client.cert -days 1826
 ```
 Copy the content of proxy_cert.pem from one of the REC pods to your machine running **openssl** command later:
 ```
-kubectl exec -it rec-0 -c redis-enterprise-node -n redis -- /bin/bash
-cd /etc/opt/redislabs
-more proxy_cert.pem
+kubectl cp rec-0:/etc/opt/redislabs/proxy_cert.pem ./proxy_cert.pem -c redis-enterprise-node
 ```
 
 
