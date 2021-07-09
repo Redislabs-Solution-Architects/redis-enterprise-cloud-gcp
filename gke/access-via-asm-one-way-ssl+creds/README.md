@@ -38,8 +38,8 @@ export CLUSTER_LOCATION=us-west1-a
 #### 3. Install Anthos Service Mesh (ASM)
 Download ASM installation script
 ```
-curl https://storage.googleapis.com/csm-artifacts/asm/install_asm_1.9 > install_asm
-curl https://storage.googleapis.com/csm-artifacts/asm/install_asm_1.9.sha256 > install_asm.sha256
+curl https://storage.googleapis.com/csm-artifacts/asm/install_asm_1.10 > install_asm
+curl https://storage.googleapis.com/csm-artifacts/asm/install_asm_1.10.sha256 > install_asm.sha256
 sha256sum -c --ignore-missing install_asm.sha256
 chmod +x install_asm
 ```
@@ -320,9 +320,7 @@ EOF
 #### 13. Verify the database connection via one-way SSL and user creds using a sample python program
 Copy the content of proxy_cert.pem from one of the REC pods to your machine:
 ```
-kubectl exec -it rec-0 -c redis-enterprise-node -n redis -- /bin/bash
-cd /etc/opt/redislabs
-more proxy_cert.pem
+kubectl cp rec-0:/etc/opt/redislabs/proxy_cert.pem ./proxy_cert.pem -c redis-enterprise-node
 ```  
 Run test.py to verify the connection:
 ```
