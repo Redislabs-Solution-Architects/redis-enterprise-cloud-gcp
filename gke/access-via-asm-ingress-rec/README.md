@@ -57,7 +57,7 @@ Please make sure you have all the required [GCP IAM permissions](https://cloud.g
 kubectl create namespace redis
 kubectl config set-context --current --namespace=redis
 
-kubectl apply -f https://raw.githubusercontent.com/RedisLabs/redis-enterprise-k8s-docs/v6.0.20-4/bundle.yaml
+kubectl apply -f https://raw.githubusercontent.com/RedisLabs/redis-enterprise-k8s-docs/v6.0.20-12/bundle.yaml
 ```
   
 
