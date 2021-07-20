@@ -10,7 +10,8 @@ This repo contains anything about fully managed Redis Enterprise DBaaS on Google
 * Deployment of Redis Enterprise via GCP Marketplace on Anthos managed [EKS cluster](/marketplace/eks/eks-deploy.md)
 * Accessing a Redis Enterprise Cluster's [API endpoint](/gke/access-via-asm-ingress-rec/README.md) from outside a GKE cluster (Through Anthos Service Mesh Ingress) 
 * Accessing a [non-TLS](/gke/access-via-asm-non-tls/README.md) enabled Redis Enterprise database from outside a GKE cluster through Anthos Service Mesh
-* Accessing a [TLS-enabled](/gke/access-via-asm-ingress/README.md) Redis Enterprise database from outside a GKE cluster through Anthos Service Mesh / Nginx
+* Accessing a [mTLS-enabled](/gke/access-via-asm-ingress/README.md) Redis Enterprise database from outside a GKE cluster through Anthos Service Mesh / Nginx
+* Accessing a Redis Enterprise Database from outside a GKE cluster (Through Anthos Service Mesh Ingress) via [one-way SSL and user creds](/gke/access-via-asm-one-way-ssl%2Bcreds/README.md) (username/password)
 * Accessing a Redis Enterprise database from outside a GKE cluster through [Nginx](/gke/access-via-nginx/README.md)
 * Setting up Active-Active geo replciation with GKE clusters (Coming...)
 
