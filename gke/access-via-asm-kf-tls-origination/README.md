@@ -5,8 +5,9 @@
 2. Install Anthos Service Mesh (ASM) on the GKE cluster
 3. Install Kf on the GKE cluster
 4. Install Redis Enterprise Cluster on the GKE cluster
+5. Expose Redis Enterprise Cluster admin console (a.k.a. CM) through Anthos Service Mesh via HTTPS at port 443
 5. Create a Redis Enterprise database with TLS (one-way SSL) enabled
-6. Expose the TLS-enabled Redis Enterprise database through Anthos Service Mesh
+6. Expose the TLS-enabled Redis Enterprise database through Anthos Service Mesh at a TCP port 6379
 7. Create a user provided service for the TLS-enabled Redis Enterprise database
 8. Configure TLS origination for accessing the TLS-enabled Redis Enterprise database from within the GKE cluster under Anthos Service Mesh
 9. Validate the setup using the Spring Music sample app
