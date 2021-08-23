@@ -40,7 +40,11 @@ curl https://storage.googleapis.com/csm-artifacts/asm/install_asm_1.10 > install
 curl https://storage.googleapis.com/csm-artifacts/asm/install_asm_1.10.sha256 > install_asm.sha256
 sha256sum -c --ignore-missing install_asm.sha256
 chmod +x install_asm
+```  
+Note: If you are running the ASM install on MacOS, you will need to install kpt as follows:  
 ```
+gcloud components install kpt
+```  
 Install Anthos Service Mesh (ASM)  
 Please make sure you have all the required [GCP IAM permissions](https://cloud.google.com/service-mesh/docs/installation-permissions) before running the script below.  
 ```
