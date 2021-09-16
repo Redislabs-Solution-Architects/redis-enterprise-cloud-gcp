@@ -76,6 +76,13 @@ metadata:
   name: rec
 spec:
   nodes: 3
+  redisEnterpriseNodeResources:
+    requests:
+      cpu: "1"
+      memory: 4Gi
+    limits:
+      cpu: "2"
+      memory: 4Gi
   persistentSpec:
     enabled: true
     storageClassName: "standard"

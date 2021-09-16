@@ -359,6 +359,13 @@ metadata:
   name: rec
 spec:
   nodes: 3
+  redisEnterpriseNodeResources:
+    requests:
+      cpu: "1"
+      memory: 4Gi
+    limits:
+      cpu: "2"
+      memory: 4Gi
 EOF
 ```  
 It will take about 8 minutes to complete the deployment.  Run the following command to ensure all three Redis Enterprise Cluster pods are up and running:
