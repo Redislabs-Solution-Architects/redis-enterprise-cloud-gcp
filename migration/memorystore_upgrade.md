@@ -106,13 +106,13 @@ redis-cli -u redis://10.206.224.69:6379
 > get watch
 ```
 In the Target (Redis Enterprise db instance):
-```
+<pre>
 redis-cli -u redis://redis-19838.internal.c17096.us-central1-mz.gcp.cloud.rlrcp.com:19838 -a oUc0CxTsmed7dWZVPPlcj2tk6eSD343V
 
 > get watch
 
-It should return **rolex**
-```
+It should return <b>rolex</b>
+</pre>
 
 
 #### 8. Verify existing key's value update
@@ -125,12 +125,12 @@ redis-cli -u redis://10.206.224.69:6379
 > get watch
 ```
 In the Target (Redis Enterprise db instance):
-```
+<pre>
 redis-cli -u redis://redis-19838.internal.c17096.us-central1-mz.gcp.cloud.rlrcp.com:19838 -a oUc0CxTsmed7dWZVPPlcj2tk6eSD343V
 
 > get watch
 
-It should return **panerai**
-```
+It should return <b>panerai</b>
+</pre>
 
 
