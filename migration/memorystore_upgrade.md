@@ -11,15 +11,15 @@ The following is the high level workflow which you will follow:
 2. Enable keyspace notification for your MemoryStore instance in GCP console
 3. Install Redis and RIOT
 4. Populate seed data for migration test
-5. Use "riot-redis" replicate command to establish live migration connection
+5. Use "riot-redis" replicate command to establish a live migration connection
 6. Verify migration of existing data
 7. Verify new key insertion
 8. Verify existing key's value update
 
 
 #### 1. Verify prerequisite checklist
-* Collect the primary endpoint of your MemoryStore for Redis instance
-* Collect the private endpoint and the password of your fully managed Redis Enterprise database
+* Collect the primary endpoint of your MemoryStore for Redis instance (Source)  
+* Collect the private endpoint and the password of your fully managed Redis Enterprise database (Target)  
 * Ensure the VPC network your MemoryStore instance is tied to is the same VPC network your fully managed Redis Enterprise subscription is peered 
 * Provision a Ubuntu VM in the same VPC network mentioned in the previous step   
 The following screen shots will help you locate and ensure the VPC networks are identical. First, verify the authorized VPC network in the MemoryStore instance:
@@ -51,11 +51,13 @@ git clone https://github.com/redis-developer/riot.git
 
 #### 4. Populate seed data for migration test
 SSH into your Ubuntu VM  
-Insert a new key to your MemoryStore instance  
+Insert a new key to your MemoryStore instance:
 ```
-redis-cli -u redis://<memorystore-primary-endpoint-IP>:<memorystore-primary-endpoint-port>
-```
-```
+redis-cli -u redis://<memorystore-primary-endpoint-IP>:<memorystore-primary-endpoint-port>  
+  
+In our example,
+redis-cli -u redis://10.206.224.69:6379
+  
 > set redis fastest-db
 > get redis
 ```
