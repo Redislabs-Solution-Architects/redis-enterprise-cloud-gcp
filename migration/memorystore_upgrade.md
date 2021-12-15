@@ -63,7 +63,7 @@ redis-cli -u redis://10.206.224.69:6379
 ```
 
 
-#### 5. Use "riot-redis" replicate command to establish live migration connection
+#### 5. Use "riot-redis" replicate command to establish a live migration connection
 Open another SSH session with the Ubuntu VM  
 Establish a live migration connection as follows:   
 ```
@@ -85,7 +85,7 @@ replicate \
 
 
 #### 6. Verify migration of existing data
-In your first SSH session with the Ubuntu VM, run the following commands to verify data migration from the Source to Target:  
+In your first SSH session with the Ubuntu VM, run the following commands to verify if the data migration from the Source to Target is successful:  
 <pre>
 In our example,
 redis-cli -u redis://redis-19838.internal.c17096.us-central1-mz.gcp.cloud.rlrcp.com:19838 -a oUc0CxTsmed7dWZVPPlcj2tk6eSD343V 
