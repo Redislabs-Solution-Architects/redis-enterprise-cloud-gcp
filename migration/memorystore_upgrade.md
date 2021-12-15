@@ -86,14 +86,14 @@ replicate \
 
 #### 6. Verify migration of existing data
 In your first SSH session with the Ubuntu VM, run the following commands to verify data migration from the Source to Target:  
-```
+<pre>
 In our example,
 redis-cli -u redis://redis-19838.internal.c17096.us-central1-mz.gcp.cloud.rlrcp.com:19838 -a oUc0CxTsmed7dWZVPPlcj2tk6eSD343V 
 
 > get redis
 
-It should return **fastest-db**
-```
+It should return <b>fastest-db</b>
+</pre>
 
 
 #### 7. Verify new key insertion 
