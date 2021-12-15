@@ -4,6 +4,7 @@ This repo contains anything about fully managed Redis Enterprise DBaaS on Google
 
 * [Pricing](/pricing/pricing.md) estimate for running fully managed Redis Enterprise DBaaS on GCP
 * Provisioning a fully managed Redis Enterprise DBaaS on GCP subscription using [Terraform](/terraform//terraform.md)
+* [Upgrading](/migration/memorystore_upgrade.md) from MemoryStore for Redis to Redis Enterprise Cloud on GCP Marketplace
 * [Monitoring](/monitoring//monitoring.md) a fully managed Redis Enterprise DBaaS subscription using Promethues/Grafana
 * Setting up [Active-Passive](/active-passive//active-passive-geo-distribution.md) Geo Distribution between fully managed Redis Enterprise DBaaS subscriptions
 * Deployment of Redis Enterprise via GCP Marketplace on Anthos managed [AKS cluster](/marketplace/aks/aks-deploy.md)
