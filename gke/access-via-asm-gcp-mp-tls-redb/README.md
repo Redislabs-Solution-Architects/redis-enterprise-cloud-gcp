@@ -164,7 +164,7 @@ metadata:
   name: external-tls-redis
   namespace: redis
 spec:
-  host: redis-10019.c17257.us-west1-mz.gcp.cloud.rlrcp.com
+  host: $REDIS_HOST
   trafficPolicy:
     tls:
       mode: MUTUAL
