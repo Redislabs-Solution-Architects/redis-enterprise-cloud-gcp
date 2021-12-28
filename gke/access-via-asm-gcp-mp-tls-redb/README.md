@@ -70,7 +70,7 @@ Assuming you have created a REDB instance in GCP Marketplace. The following will
 ![TLS Four](./img/tls_4.png)
    
 - Collect the following connection parameters for the TLS-enabled REDB:  
-  - Public endpoint  
+  - Public endpoint (For example, redis-10365.c17257.us-west1-mz.gcp.cloud.rlrcp.com:10365)
   - Default user password   
   
 
