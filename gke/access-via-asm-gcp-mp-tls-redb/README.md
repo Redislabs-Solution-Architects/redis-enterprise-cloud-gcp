@@ -176,4 +176,17 @@ EOF
     
 
 #### 8. Validate Istio proxy sidecar's TLS origination for a secured mTLS REDB connection
+Get a shell to the redis-client container:
+```
+kubectl exec -ti deploy/redis-client -c redis-client -- bash
+```
+Connect to the TLS-enabled REDB instance with TLS origination configured in the Istio proxy sidecar:
+```
+redis-cli -h REPLACE_WITH_REDIS_HOST -p REPLACE_WITH_REDIS_PORT -a REPLACE_WITH_YOUR_PASSWORD
+set "watch" "rolex"
+get "watch"
+
+It shoud return "rolex"
+```
+
 
