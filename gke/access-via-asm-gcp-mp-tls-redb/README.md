@@ -143,7 +143,7 @@ cat <<EOF | kubectl apply --namespace=redis -f -
 apiVersion: networking.istio.io/v1beta1
 kind: ServiceEntry
 metadata:
-  name: external-aiven-redis
+  name: external-tls-redis
 spec:
   hosts:
   - $REDIS_HOST
