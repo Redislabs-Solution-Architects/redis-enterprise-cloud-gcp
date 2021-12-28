@@ -63,7 +63,7 @@ Assuming you have created a REDB instance in GCP Marketplace. The following will
 - Click the "Generate certificate" button
 ![TLS Two](./img/tls_2.png)
   
-- Click the "Download Redis' certificate authority" link"
+- Click the "Download Redis' certificate authority" link
 ![TLS Three](./img/tls_3.png)
   
 - Click the "Save database" button
