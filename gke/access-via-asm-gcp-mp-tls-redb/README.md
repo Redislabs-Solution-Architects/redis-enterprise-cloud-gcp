@@ -70,8 +70,8 @@ Assuming you have created a REDB instance in GCP Marketplace. The following will
 ![TLS Four](./img/tls_4.png)
    
 - Collect the following connection parameters for the TLS-enabled REDB:  
-Public endpoint  
-Default user password   
+> Public endpoint  
+> Default user password   
   
 
 #### 5. Create a K8 secret to store the client certificate, client key and server certificate for mutual TLS connection
@@ -182,7 +182,7 @@ kubectl exec -ti deploy/redis-client -c redis-client -- bash
 ```
 Connect to the TLS-enabled REDB instance with TLS origination configured in the Istio proxy sidecar:
 ```
-redis-cli -h REPLACE_WITH_REDIS_HOST -p REPLACE_WITH_REDIS_PORT -a REPLACE_WITH_YOUR_PASSWORD
+redis-cli -h <REPLACE_WITH_REDB_IP> -p <REPLACE_WITH_REDB_PORT>T -a <REPLACE_WITH_DEFAULT_USER_PASSWORD>
 set "watch" "rolex"
 get "watch"
 
