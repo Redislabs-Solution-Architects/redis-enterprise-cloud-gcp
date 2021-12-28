@@ -154,6 +154,7 @@ apiVersion: networking.istio.io/v1beta1
 kind: ServiceEntry
 metadata:
   name: external-tls-redis-${REDIS_PORT}
+  namespace: redis
 spec:
   hosts:
   - ${REDIS_HOST}
