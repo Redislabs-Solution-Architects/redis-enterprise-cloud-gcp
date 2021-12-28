@@ -2,36 +2,34 @@
 
 ## High Level Workflow
 The following is the high level workflow which you will follow:
-1. Clone this repo
-2. Create a GKE cluster
-3. Install Anthos Service Mesh (ASM)
-4. Create a TLS-enabled Redis Enterprise database (REDB) from GCP Marketplace
-5. Unpack the downloaded TLS artifact package
-6. Create a namespace and label it for sidecar injection
-7. Create a secret to store the client certificate, client key and service certificate
-8. Deploy a Redis client on the GKE cluster
-9. Create Istio resources (ServiceEntry and DestinationRule) for the TLS-enabled REDB
-10. Validate Istio proxy sidecar's TLS origination for a secured mTLS REDB connection
+1. Create a GKE cluster
+2. Install Anthos Service Mesh (ASM)
+3. Create a TLS-enabled Redis Enterprise database (REDB) from GCP Marketplace
+4. Unpack the downloaded TLS artifact package
+5. Create a namespace and label it for sidecar injection
+6. Create a secret to store the client certificate, client key and service certificate
+7. Deploy a Redis client on the GKE cluster
+8. Create Istio resources (ServiceEntry and DestinationRule) for the TLS-enabled REDB
+9. Validate Istio proxy sidecar's TLS origination for a secured mTLS REDB connection
 
 
-#### 1. Clone this repo 
-```
-git clone https://github.com/Redislabs-Solution-Architects/redis-enterprise-cloud-gcp
-cd redis-enterprise-asm-ingress/gke/access-via-asm-gcp-mp-tls-redb
-```
-
-
-#### 2. Create a GKE cluster
+#### 1. Create a GKE cluster
 ```
 export PROJECT_ID=$(gcloud info --format='value(config.project)')
 export CLUSTER_NAME="glau-asm-gke-cluster"
 export CLUSTER_LOCATION=us-west1-a
 
-./create_cluster.sh $CLUSTER_NAME $CLUSTER_LOCATION
+gcloud beta container clusters create ${CLUSTER_NAME} \
+  --zone=${CLUSTER_LOCATION} --num-nodes=3 \
+  --image-type=COS_CONTAINERD \
+  --machine-type=e2-standard-8 \
+  --network=default \
+  --enable-ip-alias \
+  --enable-stackdriver-kubernetes
 ```
 
 
-#### 3. Install Anthos Service Mesh (ASM)
+#### 2. Install Anthos Service Mesh (ASM)
 Download ASM installation script
 ```
 curl https://storage.googleapis.com/csm-artifacts/asm/install_asm_1.10 > install_asm
@@ -56,7 +54,7 @@ Please make sure you have all the required [GCP IAM permissions](https://cloud.g
 ```
 
 
-#### 4. Create a TLS-enabled Redis Enterprise database (REDB) from GCP Marketplace
+#### 3. Create a TLS-enabled Redis Enterprise database (REDB) from GCP Marketplace
 Assuming you have created a REDB instance in GCP Marketplace. The following will demonstrate how to enable mTLS and download the required key and certificates for secure connection.  
 &nbsp;  
 - Turn On "Transport layer security (TLS)" and check "Required TLS client authentiation"  
@@ -76,7 +74,7 @@ Assuming you have created a REDB instance in GCP Marketplace. The following will
   - Default user password   
   
 
-#### 5. Unpack the downloaded TLS artifact package
+#### 4. Unpack the downloaded TLS artifact package
 Unzip the redislabs_credentials.zip file:
 ```
 unzip redislabs_credentials.zip
@@ -88,7 +86,7 @@ Archive:  redislabs_credentials.zip
 ```
 
 
-#### 6. Create a namespace and label it for sidecar injection
+#### 5. Create a namespace and label it for sidecar injection
 ```
 kubectl -n istio-system get pods -l app=istiod --show-labels
 
@@ -97,7 +95,7 @@ kubectl label namespace redis istio.io/rev=asm-1104-14
 ```
 
 
-#### 7. Create a secret to store the client certificate, client key and service certificate
+#### 6. Create a secret to store the client certificate, client key and service certificate
 Set the following environment variables:
 ```
 In my example,
@@ -112,7 +110,7 @@ redis-client-${REDIS_PORT} --from-file=redislabs_user_private.key \
 ```
 
 
-#### 8. Deploy a Redis client on the GKE cluster
+#### 7. Deploy a Redis client on the GKE cluster
 ```
 cat << EOF | kubectl apply -f -
 apiVersion: apps/v1
@@ -146,7 +144,7 @@ EOF
 ```
   
 
-#### 9. Create Istio resources (ServiceEntry and DestinationRule) for the TLS-enabled REDB
+#### 8. Create Istio resources (ServiceEntry and DestinationRule) for the TLS-enabled REDB
 Create ServiceEntry resource:
 ```
 cat <<EOF | kubectl apply --namespace=redis -f -
@@ -186,7 +184,7 @@ EOF
 ```
     
 
-#### 10. Validate Istio proxy sidecar's TLS origination for a secured mTLS REDB connection
+#### 9. Validate Istio proxy sidecar's TLS origination for a secured mTLS REDB connection
 Get a shell to the redis-client container:
 ```
 kubectl exec -ti deploy/redis-client -c redis-client -- bash
