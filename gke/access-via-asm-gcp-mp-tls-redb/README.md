@@ -134,7 +134,7 @@ spec:
       annotations:
         sidecar.istio.io/logLevel: debug
         sidecar.istio.io/inject: "true"                                                                                     
-        sidecar.istio.io/userVolumeMount: '[{"name":"redis-client-${REDIS_PORT}", "mountPath":"/etc/ssl/redis/certs", "readonly":true}]'
+        sidecar.istio.io/userVolumeMount: '[{"name":"redis-client-${REDIS_PORT}", "mountPath":"/etc/ssl/redis-${REDIS-PORT}/certs", "readonly":true}]'
         sidecar.istio.io/userVolume: '[{"name":"redis-client-${REDIS_PORT}", "secret":{"secretName":"redis-client-${REDIS_PORT}"}}]'
     spec:
       containers:
@@ -179,9 +179,9 @@ spec:
   trafficPolicy:
     tls:
       mode: MUTUAL
-      clientCertificate: /etc/ssl/redis/certs/redislabs_user.crt
-      privateKey: /etc/ssl/redis/certs/redislabs_user_private.key
-      caCertificates: /etc/ssl/redis/certs/redislabs_ca.pem
+      clientCertificate: /etc/ssl/redis-${REDIS_PORT}/certs/redislabs_user.crt
+      privateKey: /etc/ssl/redis-${REDIS_PORT}/certs/redislabs_user_private.key
+      caCertificates: /etc/ssl/redis-${REDIS_PORT}/certs/redislabs_ca.pem
 EOF
 ```
     
