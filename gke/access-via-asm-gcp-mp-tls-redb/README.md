@@ -69,9 +69,9 @@ Click the "Download Redis' certificate authority" link"
 Click the "Save database" button
 ![TLS Four](./img/tls_4.png)
    
-Collect the following connection parameters for the TLS-enabled REDB:
-Public endpoint
-Default user password 
+Collect the following connection parameters for the TLS-enabled REDB:  
+Public endpoint  
+Default user password   
   
 
 5. Create a K8 secret to store the client certificate, client key and server certificate for mutual TLS connection
