@@ -56,8 +56,7 @@ Please make sure you have all the required [GCP IAM permissions](https://cloud.g
 
 4. Create a TLS-enabled Redis Enterprise database (REDB) from GCP Marketplace
 Assuming you have created a REDB instance in GCP Marketplace. The following will demonstrate to enable mTLS and download the required key and certificates for secure connection.  
-* Turn On "Transport layer security (TLS)"
-* Check "Required TLS client authentiation"
+Turn On "Transport layer security (TLS)" and check "Required TLS client authentiation"  
 ![TLS One](./img/tls_1.png)
    
 * Click the "Generate certificate" button
