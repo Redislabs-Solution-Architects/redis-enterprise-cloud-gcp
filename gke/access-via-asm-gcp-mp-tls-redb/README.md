@@ -191,7 +191,12 @@ kubectl exec -ti deploy/redis-client -c redis-client -- bash
 ```
 Connect to the TLS-enabled REDB instance with TLS origination configured in the Istio proxy sidecar:
 ```
-redis-cli -h <REPLACE_WITH_REDB_IP> -p <REPLACE_WITH_REDB_PORT>T -a <REPLACE_WITH_DEFAULT_USER_PASSWORD>
+redis-cli -h <REPLACE_WITH_REDB_IP> -p <REPLACE_WITH_REDB_PORT> -a <REPLACE_WITH_DEFAULT_USER_PASSWORD>
+
+In my example,
+redis-cli -h redis-10365.c17257.us-west1-mz.gcp.cloud.rlrcp.com -p 10365 -a [REDACTED]
+
+Create a key-value pair:
 set "watch" "rolex"
 get "watch"
 
