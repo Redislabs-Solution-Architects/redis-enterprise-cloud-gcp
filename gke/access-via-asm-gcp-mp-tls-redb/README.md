@@ -54,27 +54,27 @@ Please make sure you have all the required [GCP IAM permissions](https://cloud.g
 ```
 
 
-4. Create a TLS-enabled Redis Enterprise database (REDB) from GCP Marketplace
+#### 4. Create a TLS-enabled Redis Enterprise database (REDB) from GCP Marketplace
 Assuming you have created a REDB instance in GCP Marketplace. The following will demonstrate to enable mTLS and download the required key and certificates for secure connection.  
 &nbsp;  
-Turn On "Transport layer security (TLS)" and check "Required TLS client authentiation"  
+- Turn On "Transport layer security (TLS)" and check "Required TLS client authentiation"  
 ![TLS One](./img/tls_1.png)
    
-Click the "Generate certificate" button
+- Click the "Generate certificate" button
 ![TLS Two](./img/tls_2.png)
   
-Click the "Download Redis' certificate authority" link"
+- Click the "Download Redis' certificate authority" link"
 ![TLS Three](./img/tls_3.png)
   
-Click the "Save database" button
+- Click the "Save database" button
 ![TLS Four](./img/tls_4.png)
    
-Collect the following connection parameters for the TLS-enabled REDB:  
+- Collect the following connection parameters for the TLS-enabled REDB:  
 Public endpoint  
 Default user password   
   
 
-5. Create a K8 secret to store the client certificate, client key and server certificate for mutual TLS connection
+#### 5. Create a K8 secret to store the client certificate, client key and server certificate for mutual TLS connection
 Unzip the redislabs_credentials.zip file:
 ```
 unzip redislabs_credentials.zip
@@ -96,7 +96,7 @@ redis-client --from-file=redislabs_user_private.key \
 ```
 
 
-6. Deploy a Redis client on the GKE cluster
+#### 6. Deploy a Redis client on the GKE cluster
 ```
 cat << EOF | kubectl apply -f -
 apiVersion: apps/v1
@@ -130,7 +130,7 @@ EOF
 ```
   
 
-7. Create Istio resources (ServiceEntry and DestinationRule) for the TLS-enabled REDB
+#### 7. Create Istio resources (ServiceEntry and DestinationRule) for the TLS-enabled REDB
 Set the following environment variables:
 ```
 In my example,
@@ -175,5 +175,5 @@ EOF
 ```
     
 
-8. Validate Istio proxy sidecar's TLS origination for a secured mTLS REDB connection
+#### 8. Validate Istio proxy sidecar's TLS origination for a secured mTLS REDB connection
 
