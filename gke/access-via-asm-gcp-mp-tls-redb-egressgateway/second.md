@@ -1,6 +1,6 @@
 #### This page contains instructions to add the second TLS REDB
 
-Follow the instructions from the main [README](./README.md) to create a new TLS REDB instance GCP Marketplace. Then follow the steps below to add support for the second TLS REDB:  
+Follow the instructions from the main [README](./README.md) to create a new TLS REDB instance in GCP Marketplace. Then follow the steps below to add support for the second TLS REDB:  
 
 
 #### 1. Add a new TCP port to the Egress Gateway
@@ -24,7 +24,7 @@ istio-egressgateway   ClusterIP   10.116.0.229   <none>        16379/TCP,16380/T
 ```
 
 
-#### 2. Create the relevant Kubernetes resources to configure Egress Gateway's TLS origination for the second TLS REDB 
+#### 2. Create Kubernetes resources to configure Egress Gateway's TLS origination for the second TLS REDB 
 ```
 kubectl apply -f - <<EOF
 apiVersion: networking.istio.io/v1alpha3
