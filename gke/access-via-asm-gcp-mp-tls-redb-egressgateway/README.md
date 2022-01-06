@@ -1,4 +1,4 @@
-# Accessing a TLS-enabled Redis Enterprise database (REDB) in GCP Marketplace from an ASM GKE cluster via Istio egressgateway and TLS origination
+# Accessing a TLS-enabled Redis Enterprise database (REDB) in GCP Marketplace from an ASM GKE cluster via Istio Egress Gateway and TLS origination
 
 ## High Level Workflow
 The following is the high level workflow which you will follow:
