@@ -7,7 +7,7 @@ The following is the high level workflow which you will follow:
 3. Create a TLS-enabled Redis Enterprise database (REDB) from GCP Marketplace
 4. Unpack the downloaded TLS artifact package
 5. Install Egress Gateway
-6. Create the relevant Kubernetes resources to configure TLS origination of the REDB via Egress Gateway
+6. Create relevant Kubernetes resources to configure TLS origination of the REDB via Egress Gateway
 7. Create a namespace and label it for sidecar injection
 8. Deploy a Redis client on the GKE cluster
 9. Validate Egress Gateway's TLS origination for a secured mTLS REDB connection
@@ -175,7 +175,7 @@ istio-egressgateway   ClusterIP   10.116.0.229   <none>        16379/TCP   53s
 ```
 
 
-#### 6. Create the relevant Kubernetes resources to configure TLS origination of the REDB via Egress Gateway
+#### 6. Create relevant Kubernetes resources to configure TLS origination of the REDB via Egress Gateway
 Create a service entry for the REDB:
 ```
 kubectl apply -f - <<EOF
@@ -322,7 +322,7 @@ Get a shell to the redis-client container:
 ```
 kubectl exec -ti -n redis deploy/redis-client -c redis-client -- bash
 ```
-Connect to the TLS-enabled REDB instance with TLS origination configured in the Istio proxy sidecar:
+Connect to the TLS REDB instance with TLS origination configured through the Egress Gateway:
 ```
 redis-cli -h <REPLACE_WITH_REDIS_HOST> -p <REPLACE_WITH_REDIS_PORT> -a <REPLACE_WITH_DEFAULT_USER_PASSWORD>
 

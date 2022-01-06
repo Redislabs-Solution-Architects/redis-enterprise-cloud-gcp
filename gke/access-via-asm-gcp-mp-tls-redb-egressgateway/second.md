@@ -125,7 +125,7 @@ Get a shell to the redis-client container:
 ```
 kubectl exec -ti -n redis deploy/redis-client -c redis-client -- bash
 ```
-Connect to the second TLS REDB instance with TLS origination configured in the Istio proxy sidecar:
+Connect to the second TLS REDB instance with TLS origination configured through the Egress Gateway:
 ```
 redis-cli -h <REPLACE_WITH_REDIS_HOST> -p <REPLACE_WITH_REDIS_PORT> -a <REPLACE_WITH_DEFAULT_USER_PASSWORD>
 
