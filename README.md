@@ -15,6 +15,7 @@ This repo contains anything about running Redis Enterprise on Google Cloud Platf
 * Accessing a Redis Enterprise Database from outside a GKE cluster (Through Anthos Service Mesh Ingress) via [one-way SSL and user creds](/gke/access-via-asm-one-way-ssl%2Bcreds/README.md) (username/password)
 * Accessing a Redis Enterprise Database from Google Cloud Platform's Kf environment through user provided service - [TLS Origination's Istio Egress Gateway Edition](/gke/access-via-asm-kf-tls-origination/README.md)
 * Accessing a TLS-enabled Redis Enterprise database (REDB) in GCP Marketplace from an ASM GKE cluster via [Istio proxy sidecar's TLS origination](/gke/access-via-asm-gcp-mp-tls-redb/README.md)
+* Accessing a TLS-enabled Redis Enterprise database (REDB) in GCP Marketplace from an ASM GKE cluster via [Istio Egress Gateway and TLS origination](/gke/access-via-asm-gcp-mp-tls-redb-egressgateway/README.md)
 * Accessing a Redis Enterprise database from outside a GKE cluster through [Nginx](/gke/access-via-nginx/README.md)
 * Setting up Active-Active geo replciation with GKE clusters (Coming...)
 
