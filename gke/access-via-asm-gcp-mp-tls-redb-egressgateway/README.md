@@ -114,7 +114,7 @@ wQfk16sxprI2gOJ2vFFggdq3ixF2h4qNBt0kI7ciDhgpwS8t+/960IsIgw==
 -----END PUBLIC KEY-----
 EOF
 ```
-The expected output is: Verified OK.
+The expected output is: Verified OK.  
 Extract the contents and change to the installation's root directory:
 ```
 tar xzf istio-1.10.4-asm.14-osx.tar.gz
