@@ -4,14 +4,14 @@ This repo details the necessary steps to connect to a Redis Enterprise database 
 
 ## High Level Workflow
 The following is the high level workflow which you will follow:
-1. Collect the connection parameters of your REDB instance
+1. Collect the connection parameters of an existingr REDB instance
 2. Identify the VPC network peered with the Redis' VPC network containing the REDB instance
 3. Create a VPC access connector to the VPC network
 4. Create a Cloud Run instance
 5. Verify REDB connection from the Cloud Run instance to the REDB instance
 
 
-#### 1. Collect the connection parameters of your REDB instance
+#### 1. Collect the connection parameters of an existing REDB instance
 Follow the screen shots below to locate the necessary connection parameters  
 Collect the **Private endpoint**:
 ![private_endpoint](./img/redb_private_endpoint.png)
