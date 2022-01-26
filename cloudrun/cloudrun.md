@@ -39,7 +39,7 @@ It is a sample application listening at port 80 to keep count of RedisConf 2021 
 Rename the **Service name** to **visit-counter**:
 ![rename service](./img/rename_service_name.png)
    
-Do not forget to scroll down a bit further and check the **Allow unauthorized invocations** option.  
+*Do not forget to scroll down a bit further and check the **Allow unauthorized invocations** option.*  
      
 Expand **Container, Variables & Secrets, Connections, Security** section:   
 Change the **Container port** to **80** under **CONTAINER** tab:
