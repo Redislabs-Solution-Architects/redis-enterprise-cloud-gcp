@@ -117,7 +117,7 @@ Enter `redislabscluster.local` for Cluster name (FQDN):
 ![REC Node Config](./img/rec-node-config.png)
 Click "Next" to continue as no key is required for this lab:
 ![REC Cluster Key](./img/rec-cluster-key.png)
-Set up Admin username and password:
+Set up Admin Email and Password:
 ![REC Admin Creds](./img/rec-set-admin-creds.png)
 Verify a single node Redis Enterprise Cluster:
 ![REC Node Confirm](./img/rec-node-confirm.png)
