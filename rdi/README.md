@@ -1,4 +1,4 @@
-###  This is an Ingest Quickstart Guide on Google Cloud
+###  Ingest Quickstart Guide for Redis Data Integration on Google Cloud
 
 Redis Data Integration (RDI) currently supports two scenarios namely [Ingest](https://redis-data-integration.docs.dev.redislabs.com/ingest-qsg.html) and [Write Behind](https://redis-data-integration.docs.dev.redislabs.com/write-behind-qsg.html). 
 
@@ -11,7 +11,7 @@ The high-level architecture for this guide is as follows:
 
 
 ## Prerequisites:
-Prior to running this retail application, please ensure following pre-requisites are installed and configured.
+Prior to running this lab, please ensure following pre-requisites are installed and configured.
 - [gcloud CLI](https://cloud.google.com/sdk/docs/install)
 - [PostgreSQL Client](https://www.timescale.com/blog/how-to-install-psql-on-mac-ubuntu-debian-windows/)
 - Redis CLI (redis-cli)
@@ -80,6 +80,8 @@ gcloud sql connect $POSTGRESQL_INSTANCE --user postgres < sql_batch_file.sql
 
 #### 4. Create the Target DB in Redis Enterprise Cloud on Google Cloud
 Under Construction!!!   
+
+Create REDB with HA (replication) or RDI will fail otherwise as it will send a WAIT command to the target DB.
 
 
 
