@@ -43,7 +43,7 @@ export SUBNET=us-central1-subnet
 export ZONE=us-central1-a
 
 gcloud compute instances create $RDI_VM \
-    --image=redis-rdi-vm-image-20230228-02\
+    --image=redis-rdi-vm-image-20230228-03\
     --image-project=$PROJECT_ID \
     --machine-type=e2-medium \
     --zone=$ZONE \
