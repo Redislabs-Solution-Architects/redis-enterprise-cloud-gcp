@@ -18,22 +18,16 @@ Prior to running this lab, please ensure following pre-requisites are installed 
 
 ## High Level Workflow
 The following is the high level workflow which you will follow:
-1. Clone this repo
-2. Create the Google Compute Engine from a pre-built image
-3. Create the Source DB - Cloud SQL for PostgreSQL
-4. Create the Target DB in Redis Enterprise Cloud on Google Cloud (app.redislabs.com) fixed plan on GCP's us-central1, db password => redis
-5. Set up the RDI VM
-6. Start Debezium server
-7. Run RDI (jobs)
+1. Create the Google Compute Engine from a pre-built image
+2. Create the Source DB - Cloud SQL for PostgreSQL
+3. Create the Target DB in Redis Enterprise Cloud on Google Cloud (app.redislabs.com) fixed plan on GCP's us-central1, db password => redis
+4 Set up the RDI VM
+5. Start Debezium server
+6. Run RDI (jobs)
+7. Verify data is ingested into Target DB (Redis)
 
 
-#### 1. Clone this repo
-```
-git clone https://github.com/Redislabs-Solution-Architects/redis-enterprise-cloud-gcp
-cd redis-enterprise-cloud-gcp/rdi
-```
-
-#### 2. Create the Google Compute Engine from a pre-built image
+#### 1. Create the Google Compute Engine from a pre-built image
 Modify the environment variables' value for your environment.
 ```
 export RDI_VM=glau-rdi-vm-00
@@ -52,10 +46,21 @@ gcloud compute instances create $RDI_VM \
     --scopes=cloud-platform 
 ```
 
-#### 3. Create the Source DB - Cloud SQL for PostgreSQL
+#### 2. Create the Source DB - Cloud SQL for PostgreSQL
 Note: **database-flags=cloudsql.logical_decoding=on** enables logical replication workflows and change data capture (CDC) workflows which is required by RDI.
-
+SSH into the RDI VM:
 ```
+gcloud compute ssh $RDI_VM --zone=$ZONE
+```
+Clone this repo:
+```
+git clone https://github.com/Redislabs-Solution-Architects/redis-enterprise-cloud-gcp
+pushd redis-enterprise-cloud-gcp/rdi
+```
+Create PostgreSQL instance:
+```
+export RDI_VM=glau-rdi-vm-00
+export ZONE=us-central1-a
 export POSTGRESQL_INSTANCE=glau-postgresql-instance
 export RDI_VM_IP=$(gcloud compute instances describe $RDI_VM --zone=$ZONE --format='get(networkInterfaces[0].accessConfigs[0].natIP)')
 
@@ -77,18 +82,23 @@ Run the following command to populate test data:
 ```
 gcloud sql connect $POSTGRESQL_INSTANCE --user postgres < sql_batch_file.sql
 ```
+Move back to the home directory:
+```
+popd
+```
 
-#### 4. Create the Target DB in Redis Enterprise Cloud on Google Cloud
-Under Construction!!!   
+#### 3. Create the Target DB in Redis Enterprise Cloud on Google Cloud
+Create a fully managed Redis Enterprise database in Google Cloud with HA (replication) enabled:
+Capture the Public Endpoint information for later use:
+![redb endpoint](./img/redb-endpoint.png)
+Make sure High availability is On as RDI requires replication and sends WAIT commands:
+![redb ha](./img/redb-ha.png)
+Capture the default user's password for later use:
+![redb ha](./img/redb-password.png)
 
-Create REDB with HA (replication) or RDI will fail otherwise as it will send a WAIT command to the target DB.
 
-
-
-
-
-#### 5. Set up the RDI VM
-SSH into the VM:
+#### 4. Set up the RDI VM
+If your previous SSH session to the RDI VM has been terminated, you need to SSH into the RDI VM again as follows:
 ```
 gcloud compute ssh $RDI_VM --zone=$ZONE
 ```
@@ -99,26 +109,39 @@ sudo ./install.sh -y
 popd
 ```
    
-Set up a Redis Enterprise Cluster by accessing https://<External IP of RDI_VM>:8443
-```
-a set of on-screen snapshots => redislabscluster.local
-redis@redis.com , redis
-```
+Set up a Redis Enterprise Cluster by accessing https://<External IP of RDI_VM>:8443    
+Note: You can run this commmand: `gcloud compute instances describe $RDI_VM --zone=$ZONE --format='get(networkInterfaces[0].accessConfigs[0].natIP)'` to retrieve the external IP of the RDI VM.   
+Follow the on-screen instructions below to set up the Redis Enterprise Cluster:
+![REC Setup](./img/rec-setup.png)
+Enter `redislabscluster.local` for Cluster name (FQDN):
+![REC Node Config](./img/rec-node-config.png)
+Click "Next" to continue as no key is required for this lab:
+![REC Cluster Key](./img/rec-cluster-key.png)
+Set up Admin username and password:
+![REC Admin Creds](./img/rec-set-admin-creds.png)
+Verify a single node Redis Enterprise Cluster:
+![REC Node Confirm](./img/rec-node-confirm.png)
+
    
-Install Redis Gears:
+Inside the RDI VM, install Redis Gears:
 ```
 curl -v -k -s -u "redis@redis.com:redis" -F "module=@./gears/redis-gears.zip" https://localhost:9443/v2/modules
 ```
+You will see the below output from the command above:
+![Gears Install Ouput](./img/gears-installed.png)
+Verify Redis Gears is installed on the Redis Enterprise Cluster:
+![Gears Installed on REC](./img/cm-gears-installed.png)
+
    
 Create RDI database:
 ```
 redis-di create
 ```
-This is what you will respond to the command below:
+We will take all the default values except Host/IP of Redis Enterprise Cluster as `localhost`, Redis Enterprise Cluster username as `redis@redis.com`, and Redis Enterprise Cluster's password as `redis`.
 ```
 Host/IP of Redis Enterprise Cluster (service name in case of k8s): localhost
 Redis Enterprise Cluster username with either DB Member, Cluster Member or Cluster Admin roles: redis@redis.com
-Redis Enterprise Cluster Password: 
+Redis Enterprise Cluster Password: redis 
 API Port of Redis Enterprise Cluster [9443]: 
 Port of RDI Database [12001]: 
 Memory for RDI Database (in MB) [100]: 
@@ -161,14 +184,14 @@ mv ./rdi-postgresql/config.yaml ./rdi-postgresql/config.yaml.bak
 envsubst < ./rdi-postgresql/config.yaml.bak > ./rdi-postgresql/config.yaml
 ```
 
-6. Start Debezium server
+5. Start Debezium server
 ```
 pushd debezium-server
 ./run.sh &
 popd
 ```
 
-7. Deploy RDI (jobs)
+6. Deploy RDI (jobs)
 ```
 pushd rdi-postgresql
 redis-di deploy
@@ -183,7 +206,7 @@ INFO - Connected to target database
 Done
 ```
 
-8. Verify data is ingested into Target DB (Redis)
+7. Verify data is ingested into Target DB (Redis)
 ```
 redis-cli -h $REDIS_TARGET_DB_HOST -p $REDIS_TARGET_DB_PORT
 ```
