@@ -20,8 +20,8 @@ Prior to running this lab, please ensure following pre-requisites are installed 
 The following is the high level workflow which you will follow:
 1. Create the Google Compute Engine from a pre-built image
 2. Create the Source DB - Cloud SQL for PostgreSQL
-3. Create the Target DB in Redis Enterprise Cloud on Google Cloud (app.redislabs.com) fixed plan on GCP's us-central1, db password => redis
-4 Set up the RDI VM
+3. Create the Target DB in Redis Enterprise Cloud on Google Cloud
+4. Set up the RDI VM
 5. Start Debezium server
 6. Run RDI (jobs)
 7. Verify data is ingested into Target DB (Redis)
@@ -37,7 +37,7 @@ export SUBNET=us-central1-subnet
 export ZONE=us-central1-a
 
 gcloud compute instances create $RDI_VM \
-    --image=redis-rdi-vm-image-20230228-03\
+    --image=redis-rdi-vm-image-20230228-04\
     --image-project=$PROJECT_ID \
     --machine-type=e2-medium \
     --zone=$ZONE \
@@ -117,7 +117,7 @@ Enter `redislabscluster.local` for Cluster name (FQDN):
 ![REC Node Config](./img/rec-node-config.png)
 Click "Next" to continue as no key is required for this lab:
 ![REC Cluster Key](./img/rec-cluster-key.png)
-Set up Admin Email and Password:
+Set up Admin Email as `redis@redis.com` and Password as `redis`:
 ![REC Admin Creds](./img/rec-set-admin-creds.png)
 Verify a single node Redis Enterprise Cluster:
 ![REC Node Confirm](./img/rec-node-confirm.png)
@@ -179,6 +179,7 @@ Update ./rdi-postgresql/config.yaml:
 ```
 export REDIS_TARGET_DB_HOST=<Redis Target db endpoint>
 export REDIS_TARGET_DB_PORT=<Redis Target db endpoint port>
+export REDIS_TARGET_DB_PASSWORD=<Redis Target db password>
 
 mv ./rdi-postgresql/config.yaml ./rdi-postgresql/config.yaml.bak
 envsubst < ./rdi-postgresql/config.yaml.bak > ./rdi-postgresql/config.yaml
@@ -214,7 +215,7 @@ Verify if all keys are replicated
 ```
 keys *
 ```
-Validate data transforation:
+Validate data transformation:
 ```
 hgetall emp:user_id:1
 ```
