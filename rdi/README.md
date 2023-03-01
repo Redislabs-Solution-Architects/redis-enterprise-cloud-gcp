@@ -8,7 +8,7 @@ The high-level architecture for this guide is as follows:
 * Source: Google Cloud SQL for PostgreSQL database instance
 * Target: Redis Enterprise Cloud on Google Cloud
 * Redis Data Integration (RDI): RDI and RDI DB (on Redis Enterprise) in a Google Compute Engine VM
-
+![RDI Ingest Architecture Diagram](./img/RDI_Ingest_Arch_Diagram.png)
 
 ## Prerequisites:
 Prior to running this lab, please ensure following pre-requisites are installed and configured.
