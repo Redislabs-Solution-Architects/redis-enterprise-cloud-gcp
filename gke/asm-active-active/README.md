@@ -428,3 +428,4 @@ EOF
 
 
 #### 5. Create Active-Active database (REAADB) 
+https://docs.redis.com/latest/kubernetes/active-active/preview/create-reaadb/ 
