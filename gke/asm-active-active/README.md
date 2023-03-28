@@ -194,7 +194,7 @@ gcloud container clusters get-credentials $CLUSTER_NAME_01 --region $CLUSTER_LOC
 kubectl create namespace $CLUSTER_LOCATION_01
 kubectl config set-context --current --namespace=$CLUSTER_LOCATION_01
 
-VERSION=`curl --silent https://api.github.com/repos/RedisLabs/redis-enterprise-k8s-docs/releases/latest | grep tag_name | awk -F'"' '{print $4}'`
+VERSION=v6.4.2-4 
 kubectl apply -f https://raw.githubusercontent.com/RedisLabs/redis-enterprise-k8s-docs/$VERSION/bundle.yaml
 
 kubectl apply -f - <<EOF
@@ -344,7 +344,7 @@ gcloud container clusters get-credentials $CLUSTER_NAME_02 --region $CLUSTER_LOC
 kubectl create namespace $CLUSTER_LOCATION_02
 kubectl config set-context --current --namespace=$CLUSTER_LOCATION_02
 
-VERSION=`curl --silent https://api.github.com/repos/RedisLabs/redis-enterprise-k8s-docs/releases/latest | grep tag_name | awk -F'"' '{print $4}'`
+VERSION=v6.4.2-4
 kubectl apply -f https://raw.githubusercontent.com/RedisLabs/redis-enterprise-k8s-docs/$VERSION/bundle.yaml
 
 kubectl apply -f - <<EOF
