@@ -17,7 +17,7 @@ cd redis-enterprise-asm-ingress/gke/asm-active-active
 ```
     
 #### 2. Create two Active-Active participating GKE clusters
-Create first GKE cluster:
+##### Create first GKE cluster:
 ```
 export PROJECT_ID=$(gcloud info --format='value(config.project)')
 export CLUSTER_LOCATION_01=us-central1
@@ -35,7 +35,7 @@ gcloud container clusters create $CLUSTER_NAME_01 \
  --workload-pool=${PROJECT_ID}.svc.id.goog
 ```
 
-Create second GKE cluster:
+##### Create second GKE cluster:
 ```
 export CLUSTER_LOCATION_02=us-west1
 export CLUSTER_NAME_02="glau-gke-cluster-$CLUSTER_LOCATION_02"
@@ -58,7 +58,7 @@ curl https://storage.googleapis.com/csm-artifacts/asm/asmcli_1.16 > asmcli
 chmod +x asmcli
 ```
 
-Set up first GKE cluster:
+##### Set up first GKE cluster:
 ```
 gcloud container clusters get-credentials $CLUSTER_NAME_01 --region $CLUSTER_LOCATION_01 --project $PROJECT_ID
 ```
@@ -142,7 +142,7 @@ gcloud dns record-sets create *.${CLUSTER_LOCATION_01}.${DNS_SUFFIX}. \
     --type=A --ttl=300 --rrdatas=${INGRESS_HOST} --zone=$DNS_ZONE 
 ```
     
-Set up second GKE cluster:
+##### Set up second GKE cluster:
 ```
 gcloud container clusters get-credentials $CLUSTER_NAME_02 --region $CLUSTER_LOCATION_02 --project $PROJECT_ID
 ```
@@ -187,7 +187,7 @@ gcloud dns record-sets create *.${CLUSTER_LOCATION_02}.${DNS_SUFFIX}. \
 ```
     
 #### 4. Install/Configure Redis Enterprise Operator & Redis Enteprise Cluster
-Install Redis Enterprise Operator & Redis Enterprise Cluster on first GKE cluster:
+##### Install Redis Enterprise Operator & Redis Enterprise Cluster on first GKE cluster:
 ```
 gcloud container clusters get-credentials $CLUSTER_NAME_01 --region $CLUSTER_LOCATION_01 --project $PROJECT_ID
 
@@ -206,7 +206,34 @@ spec:
   nodes: 3
 EOF
 ```
-Enable Active-Active controllers:
+###### Hooking up the Admission controller directly with Kubernetes:
+Wait for the secret to be created
+```shell script
+kubectl get secret admission-tls
+NAME            TYPE     DATA   AGE
+admission-tls   Opaque   2      2m43s
+```
+Enable the Kubernetes webhook using the generated certificate stored in a kubernetes secret:
+**NOTE**: One must replace REPLACE_WITH_NAMESPACE in the following command with the namespace the REC was installed into.
+
+```shell script
+# save cert
+wget https://raw.githubusercontent.com/RedisLabs/redis-enterprise-k8s-docs/master/admission/webhook.yaml
+CERT=`kubectl get secret admission-tls -o jsonpath='{.data.cert}'`
+sed "s/NAMESPACE_OF_SERVICE_ACCOUNT/$CLUSTER_LOCATION_01/g" webhook.yaml | kubectl create -f -
+# create patch file
+cat > modified-webhook.yaml <<EOF
+webhooks:
+- name: redisenterprise.admission.redislabs
+  clientConfig:
+    caBundle: $CERT
+  admissionReviewVersions: ["v1beta1"]
+EOF
+# patch webhook with caBundle
+kubectl patch ValidatingWebhookConfiguration redis-enterprise-admission --patch "$(cat modified-webhook.yaml)"
+```
+    
+###### Enable Active-Active controllers:
 ```
 kubectl apply -f https://raw.githubusercontent.com/RedisLabs/redis-enterprise-k8s-docs/master/crds/reaadb_crd.yaml
 kubectl apply -f https://raw.githubusercontent.com/RedisLabs/redis-enterprise-k8s-docs/master/crds/rerc_crd.yaml
@@ -215,7 +242,7 @@ kubectl patch cm  operator-environment-config --type merge --patch "{\"data\": \
     \"REMOTE_CLUSTER_CONTROLLER_ENABLED\":\"true\"}}"
 ```
     
-Configure Istio for Redis Enterprise Kubernetes operator to allow external access to Redis Enterprise databases:
+###### Configure Istio for Redis Enterprise Kubernetes operator to allow external access to Redis Enterprise databases:
 ```
 export DNS_SUFFIX=istio.k8s.redis.com
 
@@ -308,7 +335,8 @@ Events:
   Normal  EnsuringLoadBalancer  17m   service-controller  Ensuring load balancer
   Normal  EnsuredLoadBalancer   17m   service-controller  Ensured load balancer
 ```
-Create RedisEnterpriseRemoteCluster resources:
+
+###### Create RedisEnterpriseRemoteCluster resources:
 ```
 kubectl apply -f - <<EOF
 apiVersion: app.redislabs.com/v1alpha1
@@ -325,7 +353,7 @@ EOF
 ```
 
               
-Install Redis Enterprise Operator & Redis Enterprise Cluster on second GKE cluster:
+##### Install Redis Enterprise Operator & Redis Enterprise Cluster on second GKE cluster:
 ```
 gcloud container clusters get-credentials $CLUSTER_NAME_02 --region $CLUSTER_LOCATION_02 --project $PROJECT_ID
 
@@ -344,7 +372,34 @@ spec:
   nodes: 3
 EOF
 ```
-Enable Active-Active controllers:
+###### Hooking up the Admission controller directly with Kubernetes:
+Wait for the secret to be created
+```shell script
+kubectl get secret admission-tls
+NAME            TYPE     DATA   AGE
+admission-tls   Opaque   2      2m43s
+```
+Enable the Kubernetes webhook using the generated certificate stored in a kubernetes secret:
+**NOTE**: One must replace REPLACE_WITH_NAMESPACE in the following command with the namespace the REC was installed into.
+
+```shell script
+# save cert
+wget https://raw.githubusercontent.com/RedisLabs/redis-enterprise-k8s-docs/master/admission/webhook.yaml
+CERT=`kubectl get secret admission-tls -o jsonpath='{.data.cert}'`
+sed "s/NAMESPACE_OF_SERVICE_ACCOUNT/$CLUSTER_LOCATION_02/g" webhook.yaml | kubectl create -f -
+# create patch file
+cat > modified-webhook.yaml <<EOF
+webhooks:
+- name: redisenterprise.admission.redislabs
+  clientConfig:
+    caBundle: $CERT
+  admissionReviewVersions: ["v1beta1"]
+EOF
+# patch webhook with caBundle
+kubectl patch ValidatingWebhookConfiguration redis-enterprise-admission --patch "$(cat modified-webhook.yaml)"
+```
+    
+###### Enable Active-Active controllers:
 ```
 kubectl apply -f https://raw.githubusercontent.com/RedisLabs/redis-enterprise-k8s-docs/master/crds/reaadb_crd.yaml
 kubectl apply -f https://raw.githubusercontent.com/RedisLabs/redis-enterprise-k8s-docs/master/crds/rerc_crd.yaml
@@ -353,7 +408,7 @@ kubectl patch cm  operator-environment-config --type merge --patch "{\"data\": \
     \"REMOTE_CLUSTER_CONTROLLER_ENABLED\":\"true\"}}"
 ```
     
-Configure Istio for Redis Enterprise Kubernetes operator to allow external access to Redis Enterprise databases:
+###### Configure Istio for Redis Enterprise Kubernetes operator to allow external access to Redis Enterprise databases:
 ```
 kubectl apply -f - <<EOF
 apiVersion: networking.istio.io/v1beta1
@@ -410,7 +465,8 @@ Verify Redis Enterprise endpoints are accessible through gateway:
 ```
 kubectl describe svc istio-ingressgateway -n istio-system
 ```
-Create RedisEnterpriseRemoteCluster resources:
+
+###### Create RedisEnterpriseRemoteCluster resources:
 ```
 kubectl apply -f - <<EOF
 apiVersion: app.redislabs.com/v1alpha1
