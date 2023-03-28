@@ -9,15 +9,14 @@ The following is the high level workflow which you will follow:
 5. ..
 6. ..
 
-
-### 1. Clone this repo 
-```shell script
-git clone https://github.com/Redislabs-Solution-Architects/redis-enterprise-cloud-gcp
-cd redis-enterprise-asm-ingress/gke/asm-active-active
-```
+### Prerequisites:
+Please ensure following pre-requisites are installed and configured.
+- [gcloud CLI](https://cloud.google.com/sdk/docs/install)
+- wget
+- jq
     
-### 2. Create two Active-Active participating GKE clusters
-#### Create first GKE cluster:
+### 1. Create two Active-Active participating GKE clusters
+#### Create the first GKE cluster:
 ```shell script
 export PROJECT_ID=$(gcloud info --format='value(config.project)')
 export CLUSTER_LOCATION_01=us-central1
@@ -35,7 +34,7 @@ gcloud container clusters create $CLUSTER_NAME_01 \
  --workload-pool=${PROJECT_ID}.svc.id.goog
 ```
 
-#### Create second GKE cluster:
+#### Create the second GKE cluster:
 ```shell script
 export CLUSTER_LOCATION_02=us-west1
 export CLUSTER_NAME_02="glau-gke-cluster-$CLUSTER_LOCATION_02"
@@ -51,14 +50,14 @@ gcloud container clusters create $CLUSTER_NAME_02 \
  --workload-pool=${PROJECT_ID}.svc.id.goog
 ```
     
-### 3. Install Anthos Service Mesh (ASM) and Ingress Gateway
+### 2. Install Anthos Service Mesh (ASM) and Ingress Gateway
 Download ASM install script:
 ```shell script
 curl https://storage.googleapis.com/csm-artifacts/asm/asmcli_1.16 > asmcli
 chmod +x asmcli
 ```
 
-#### Set up first GKE cluster:
+#### Set up the first GKE cluster:
 ```shell script
 gcloud container clusters get-credentials $CLUSTER_NAME_01 --region $CLUSTER_LOCATION_01 --project $PROJECT_ID
 ```
@@ -142,7 +141,7 @@ gcloud dns record-sets create *.${CLUSTER_LOCATION_01}.${DNS_SUFFIX}. \
     --type=A --ttl=300 --rrdatas=${INGRESS_HOST} --zone=$DNS_ZONE 
 ```
     
-#### Set up second GKE cluster:
+#### Set up the second GKE cluster:
 ```shell script
 gcloud container clusters get-credentials $CLUSTER_NAME_02 --region $CLUSTER_LOCATION_02 --project $PROJECT_ID
 ```
@@ -186,7 +185,7 @@ gcloud dns record-sets create *.${CLUSTER_LOCATION_02}.${DNS_SUFFIX}. \
     --type=A --ttl=300 --rrdatas=${INGRESS_HOST} --zone=$DNS_ZONE 
 ```
     
-### 4. Install/Configure Redis Enterprise Operator & Redis Enteprise Cluster
+### 3. Install/Configure Redis Enterprise Operator & Redis Enteprise Cluster
 #### Install Redis Enterprise Operator & Redis Enterprise Cluster on the first GKE cluster:
 ```shell script
 gcloud container clusters get-credentials $CLUSTER_NAME_01 --region $CLUSTER_LOCATION_01 --project $PROJECT_ID
@@ -451,7 +450,7 @@ EOF
 kubectl patch ValidatingWebhookConfiguration redis-enterprise-admission --patch "$(cat modified-webhook.yaml)"
 ```
     
-### 5. Create secrets for RedisEnterpriseRemoteCluster resources
+### 4. Create secrets for RedisEnterpriseRemoteCluster resources
 #### Create secret for the first Redis Enterprise (Remote) cluster
 ```shell script
 # Connect to the first GKE cluster and Redis Enterprise namespace
@@ -461,7 +460,7 @@ kubectl config set-context --current --namespace=$CLUSTER_LOCATION_01
 # Retrieve Redis Enterprise Cluster's creds
 export REDIS_ENTERPRISE_PWD_01=$(kubectl get secrets -n $CLUSTER_LOCATION_01 redis-enterprise -o jsonpath="{.data.password}")
 export REDIS_ENTERPRISE_USERNAME_01=$(kubectl get secrets -n $CLUSTER_LOCATION_01 redis-enterprise -o jsonpath="{.data.username}")
-export REDIS_ENTERPRISE_REMOTE_CLUSTER_01=redis-enterprise-rerc-$CLUSTER_LOCATION_01
+export REDIS_ENTERPRISE_REMOTE_CLUSTER_01=rerc-$CLUSTER_LOCATION_01
 
 # Store creds in a secret
 kubectl apply -f - <<EOF
@@ -471,7 +470,7 @@ data:
   username: $REDIS_ENTERPRISE_USERNAME_01
 kind: Secret
 metadata:
-  name: $REDIS_ENTERPRISE_REMOTE_CLUSTER_01
+  name: redis-enterprise-$REDIS_ENTERPRISE_REMOTE_CLUSTER_01
 type: Opaque
 EOF
 ```
@@ -485,7 +484,7 @@ kubectl config set-context --current --namespace=$CLUSTER_LOCATION_02
 # Retrieve Redis Enterprise Cluster's creds
 export REDIS_ENTERPRISE_PWD_02=$(kubectl get secrets -n $CLUSTER_LOCATION_02 redis-enterprise -o jsonpath="{.data.password}")
 export REDIS_ENTERPRISE_USERNAME_02=$(kubectl get secrets -n $CLUSTER_LOCATION_02 redis-enterprise -o jsonpath="{.data.username}")
-export REDIS_ENTERPRISE_REMOTE_CLUSTER_02=redis-enterprise-rerc-$CLUSTER_LOCATION_02
+export REDIS_ENTERPRISE_REMOTE_CLUSTER_02=rerc-$CLUSTER_LOCATION_02
 
 # Store creds in a secret
 kubectl apply -f - <<EOF
@@ -495,18 +494,19 @@ data:
   username: $REDIS_ENTERPRISE_USERNAME_02
 kind: Secret
 metadata:
-  name: $REDIS_ENTERPRISE_REMOTE_CLUSTER_02
+  name: redis-enterprise-$REDIS_ENTERPRISE_REMOTE_CLUSTER_02
 type: Opaque
 EOF
 ```
     
     
-### 6. Create RedisEnterpriseRemoteCluster resources
+### 5. Create RedisEnterpriseRemoteCluster resources
 #### Create Redis Enterprise Remote Cluster resource for the first REC
 ```shell script
 # Connect to the first GKE cluster and Redis Enterprise namespace
 gcloud container clusters get-credentials $CLUSTER_NAME_01 --region $CLUSTER_LOCATION_01 --project $PROJECT_ID
 kubectl config set-context --current --namespace=$CLUSTER_LOCATION_01
+export REDIS_ENTERPRISE_REMOTE_CLUSTER_01=rerc-$CLUSTER_LOCATION_01
 export DNS_SUFFIX=istio.k8s.redis.com
 
 kubectl apply -f - <<EOF
@@ -519,7 +519,7 @@ spec:
   recNamespace: $CLUSTER_LOCATION_01
   apiFqdnUrl: api.${CLUSTER_LOCATION_01}.${DNS_SUFFIX}
   dbFqdnSuffix: -db.${CLUSTER_LOCATION_01}.${DNS_SUFFIX}
-  secretName: $REDIS_ENTERPRISE_REMOTE_CLUSTER_01
+  secretName: redis-enterprise-$REDIS_ENTERPRISE_REMOTE_CLUSTER_01
 EOF
 ```
     
@@ -528,6 +528,7 @@ EOF
 # Connect to the second GKE cluster and Redis Enterprise namespace
 gcloud container clusters get-credentials $CLUSTER_NAME_01 --region $CLUSTER_LOCATION_02 --project $PROJECT_ID
 kubectl config set-context --current --namespace=$CLUSTER_LOCATION_02
+export REDIS_ENTERPRISE_REMOTE_CLUSTER_02=rerc-$CLUSTER_LOCATION_02
 export DNS_SUFFIX=istio.k8s.redis.com
 
 kubectl apply -f - <<EOF
@@ -540,9 +541,9 @@ spec:
   recNamespace: $CLUSTER_LOCATION_02
   apiFqdnUrl: api.${CLUSTER_LOCATION_02}.${DNS_SUFFIX}
   dbFqdnSuffix: -db.${CLUSTER_LOCATION_02}.${DNS_SUFFIX}
-  secretName: $REDIS_ENTERPRISE_REMOTE_CLUSTER_02
+  secretName: redis-enterprise-$REDIS_ENTERPRISE_REMOTE_CLUSTER_02
 EOF
 ```
     
-### 7. Create Active-Active database (REAADB) 
+### 6. Create Active-Active database (REAADB) 
 https://docs.redis.com/latest/kubernetes/active-active/preview/create-reaadb/ 
