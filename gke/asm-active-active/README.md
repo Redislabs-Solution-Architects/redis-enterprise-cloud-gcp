@@ -11,14 +11,14 @@ The following is the high level workflow which you will follow:
 
 
 ### 1. Clone this repo 
-```
+```shell script
 git clone https://github.com/Redislabs-Solution-Architects/redis-enterprise-cloud-gcp
 cd redis-enterprise-asm-ingress/gke/asm-active-active
 ```
     
 ### 2. Create two Active-Active participating GKE clusters
 #### Create first GKE cluster:
-```
+```shell script
 export PROJECT_ID=$(gcloud info --format='value(config.project)')
 export CLUSTER_LOCATION_01=us-central1
 export CLUSTER_NAME_01="glau-gke-cluster-$CLUSTER_LOCATION_01"
@@ -36,7 +36,7 @@ gcloud container clusters create $CLUSTER_NAME_01 \
 ```
 
 #### Create second GKE cluster:
-```
+```shell script
 export CLUSTER_LOCATION_02=us-west1
 export CLUSTER_NAME_02="glau-gke-cluster-$CLUSTER_LOCATION_02"
 export SUBNETWORK_02="us-west1-subnet"
@@ -53,17 +53,17 @@ gcloud container clusters create $CLUSTER_NAME_02 \
     
 ### 3. Install Anthos Service Mesh (ASM) and Ingress Gateway
 Download ASM install script:
-```
+```shell script
 curl https://storage.googleapis.com/csm-artifacts/asm/asmcli_1.16 > asmcli
 chmod +x asmcli
 ```
 
 #### Set up first GKE cluster:
-```
+```shell script
 gcloud container clusters get-credentials $CLUSTER_NAME_01 --region $CLUSTER_LOCATION_01 --project $PROJECT_ID
 ```
 Run `asmcli validate` to make sure that your project and cluster are set up as required to install Anthos Service Mesh:
-```
+```shell script
 ./asmcli validate \
   --project_id $PROJECT_ID \
   --cluster_name $CLUSTER_NAME_01 \
@@ -72,7 +72,7 @@ Run `asmcli validate` to make sure that your project and cluster are set up as r
   --output_dir ./asm_output_01
 ```
 Install Anthos Service Mesh:
-```
+```shell script
 ./asmcli install \
   --project_id $PROJECT_ID\
   --cluster_name $CLUSTER_NAME_01 \
@@ -80,9 +80,9 @@ Install Anthos Service Mesh:
   --output_dir ./asm_output_01 \
   --enable_all \
   --ca mesh_ca
-  ```
-On success, you should have output similar to the following:
 ```
+On success, you should have output similar to the following:
+```shell script
 asmcli: ...done!
 asmcli:
 asmcli: *****************************
@@ -114,7 +114,7 @@ asmcli: Successfully installed ASM.
 ```
     
 Install Istio Ingress Gateway:
-```
+```shell script
 kubectl config set-context --current --namespace=istio-system
 export asm_version=$(kubectl get deploy -n istio-system -l app=istiod \
   -o=jsonpath='{.items[*].metadata.labels.istio\.io\/rev}''{"\n"}')
@@ -124,7 +124,7 @@ kubectl apply -f ./asm_output_01/samples/gateways/istio-ingressgateway/autoscali
 ```
     
 Create a Private DNS zone in your Google Cloud envrionment:
-```
+```shell script
 export DNS_ZONE=private-redis-zone
 export DNS_SUFFIX=istio.k8s.redis.com
 gcloud dns managed-zones create $DNS_ZONE \
@@ -135,7 +135,7 @@ gcloud dns managed-zones create $DNS_ZONE \
     --visibility=private
 ```
 Create DNS entry in your Google Cloud environment:
-```
+```shell script
 export INGRESS_HOST=$(kubectl -n istio-system get service istio-ingressgateway \
        -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 gcloud dns record-sets create *.${CLUSTER_LOCATION_01}.${DNS_SUFFIX}. \
@@ -143,11 +143,11 @@ gcloud dns record-sets create *.${CLUSTER_LOCATION_01}.${DNS_SUFFIX}. \
 ```
     
 #### Set up second GKE cluster:
-```
+```shell script
 gcloud container clusters get-credentials $CLUSTER_NAME_02 --region $CLUSTER_LOCATION_02 --project $PROJECT_ID
 ```
 Run `asmcli validate` to make sure that your project and cluster are set up as required to install Anthos Service Mesh:
-```
+```shell script
 ./asmcli validate \
   --project_id $PROJECT_ID \
   --cluster_name $CLUSTER_NAME_02 \
@@ -156,7 +156,7 @@ Run `asmcli validate` to make sure that your project and cluster are set up as r
   --output_dir ./asm_output_02
 ```
 Install Anthos Service Mesh:
-```
+```shell script
 ./asmcli install \
   --project_id $PROJECT_ID\
   --cluster_name $CLUSTER_NAME_02 \
@@ -167,7 +167,7 @@ Install Anthos Service Mesh:
   ```
     
 Install Istio Ingress Gateway:
-```
+```shell script
 kubectl config set-context --current --namespace=istio-system
 export asm_version=$(kubectl get deploy -n istio-system -l app=istiod \
   -o=jsonpath='{.items[*].metadata.labels.istio\.io\/rev}''{"\n"}')
@@ -177,7 +177,7 @@ kubectl apply -f ./asm_output_02/samples/gateways/istio-ingressgateway/autoscali
 ```
     
 Create DNS entry in your Google Cloud environment:
-```
+```shell script
 export DNS_ZONE=private-redis-zone
 export DNS_SUFFIX=istio.k8s.redis.com
 export INGRESS_HOST=$(kubectl -n istio-system get service istio-ingressgateway \
@@ -187,8 +187,8 @@ gcloud dns record-sets create *.${CLUSTER_LOCATION_02}.${DNS_SUFFIX}. \
 ```
     
 ### 4. Install/Configure Redis Enterprise Operator & Redis Enteprise Cluster
-#### Install Redis Enterprise Operator & Redis Enterprise Cluster on first GKE cluster:
-```
+#### Install Redis Enterprise Operator & Redis Enterprise Cluster on the first GKE cluster:
+```shell script
 gcloud container clusters get-credentials $CLUSTER_NAME_01 --region $CLUSTER_LOCATION_01 --project $PROJECT_ID
 
 kubectl create namespace $CLUSTER_LOCATION_01
@@ -208,7 +208,7 @@ EOF
 ```
     
 ##### Enable Active-Active controllers:
-```
+```shell script
 kubectl apply -f https://raw.githubusercontent.com/RedisLabs/redis-enterprise-k8s-docs/master/crds/reaadb_crd.yaml
 kubectl apply -f https://raw.githubusercontent.com/RedisLabs/redis-enterprise-k8s-docs/master/crds/rerc_crd.yaml
 kubectl patch cm  operator-environment-config --type merge --patch "{\"data\": \
@@ -217,7 +217,7 @@ kubectl patch cm  operator-environment-config --type merge --patch "{\"data\": \
 ```
     
 ##### Configure Istio for Redis Enterprise Kubernetes operator to allow external access to Redis Enterprise databases:
-```
+```shell script
 export DNS_SUFFIX=istio.k8s.redis.com
 
 kubectl apply -f - <<EOF
@@ -239,7 +239,7 @@ spec:
       mode: PASSTHROUGH
 EOF
 ```
-```
+```shell script
 kubectl apply -f - <<EOF
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
@@ -272,11 +272,11 @@ spec:
 EOF
 ```
 Verify Redis Enterprise endpoints are accessible through gateway:
-```
+```shell script
 kubectl describe svc istio-ingressgateway -n istio-system
 ```
 Make sure Endpoints lines are not empty from the output:
-```
+```shell script
 Name:                     istio-ingressgateway
 Namespace:                istio-system
 Labels:                   app=istio-ingressgateway
@@ -337,8 +337,8 @@ EOF
 kubectl patch ValidatingWebhookConfiguration redis-enterprise-admission --patch "$(cat modified-webhook.yaml)"
 ```
                 
-#### Install Redis Enterprise Operator & Redis Enterprise Cluster on second GKE cluster:
-```
+#### Install Redis Enterprise Operator & Redis Enterprise Cluster on the second GKE cluster:
+```shell script
 gcloud container clusters get-credentials $CLUSTER_NAME_02 --region $CLUSTER_LOCATION_02 --project $PROJECT_ID
 
 kubectl create namespace $CLUSTER_LOCATION_02
@@ -358,7 +358,7 @@ EOF
 ```
          
 ##### Enable Active-Active controllers:
-```
+```shell script
 kubectl apply -f https://raw.githubusercontent.com/RedisLabs/redis-enterprise-k8s-docs/master/crds/reaadb_crd.yaml
 kubectl apply -f https://raw.githubusercontent.com/RedisLabs/redis-enterprise-k8s-docs/master/crds/rerc_crd.yaml
 kubectl patch cm  operator-environment-config --type merge --patch "{\"data\": \
@@ -367,7 +367,7 @@ kubectl patch cm  operator-environment-config --type merge --patch "{\"data\": \
 ```
     
 ##### Configure Istio for Redis Enterprise Kubernetes operator to allow external access to Redis Enterprise databases:
-```
+```shell script
 kubectl apply -f - <<EOF
 apiVersion: networking.istio.io/v1beta1
 kind: Gateway
@@ -387,7 +387,7 @@ spec:
       mode: PASSTHROUGH
 EOF
 ```
-```
+```shell script
 kubectl apply -f - <<EOF
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
@@ -420,7 +420,7 @@ spec:
 EOF
 ```
 Verify Redis Enterprise endpoints are accessible through gateway:
-```
+```shell script
 kubectl describe svc istio-ingressgateway -n istio-system
 ```
     
@@ -451,42 +451,98 @@ EOF
 kubectl patch ValidatingWebhookConfiguration redis-enterprise-admission --patch "$(cat modified-webhook.yaml)"
 ```
     
-### 5. Collect REC credentials
-https://docs.redis.com/latest/kubernetes/active-active/preview/prepare-clusters/#collect-rec-credentials
+### 5. Create secrets for RedisEnterpriseRemoteCluster resources
+#### Create secret for the first Redis Enterprise (Remote) cluster
+```shell script
+# Connect to the first GKE cluster and Redis Enterprise namespace
+gcloud container clusters get-credentials $CLUSTER_NAME_01 --region $CLUSTER_LOCATION_01 --project $PROJECT_ID
+kubectl config set-context --current --namespace=$CLUSTER_LOCATION_01
 
+# Retrieve Redis Enterprise Cluster's creds
+export REDIS_ENTERPRISE_PWD_01=$(kubectl get secrets -n $CLUSTER_LOCATION_01 redis-enterprise -o jsonpath="{.data.password}")
+export REDIS_ENTERPRISE_USERNAME_01=$(kubectl get secrets -n $CLUSTER_LOCATION_01 redis-enterprise -o jsonpath="{.data.username}")
+export REDIS_ENTERPRISE_REMOTE_CLUSTER_01=redis-enterprise-rerc-$CLUSTER_LOCATION_01
 
-### 6. Create RedisEnterpriseRemoteCluster resources
-#### For REC-1:
+# Store creds in a secret
+kubectl apply -f - <<EOF
+apiVersion: v1
+data:
+  password: $REDIS_ENTERPRISE_PWD_01
+  username: $REDIS_ENTERPRISE_USERNAME_01
+kind: Secret
+metadata:
+  name: $REDIS_ENTERPRISE_REMOTE_CLUSTER_01
+type: Opaque
+EOF
 ```
+   
+#### Create secret for the second Redis Enterprise (Remote) cluster
+```shell script
+# Connect to the second GKE cluster and Redis Enterprise namespace
+gcloud container clusters get-credentials $CLUSTER_NAME_02 --region $CLUSTER_LOCATION_02 --project $PROJECT_ID
+kubectl config set-context --current --namespace=$CLUSTER_LOCATION_02
+
+# Retrieve Redis Enterprise Cluster's creds
+export REDIS_ENTERPRISE_PWD_02=$(kubectl get secrets -n $CLUSTER_LOCATION_02 redis-enterprise -o jsonpath="{.data.password}")
+export REDIS_ENTERPRISE_USERNAME_02=$(kubectl get secrets -n $CLUSTER_LOCATION_02 redis-enterprise -o jsonpath="{.data.username}")
+export REDIS_ENTERPRISE_REMOTE_CLUSTER_02=redis-enterprise-rerc-$CLUSTER_LOCATION_02
+
+# Store creds in a secret
+kubectl apply -f - <<EOF
+apiVersion: v1
+data:
+  password: $REDIS_ENTERPRISE_PWD_02
+  username: $REDIS_ENTERPRISE_USERNAME_02
+kind: Secret
+metadata:
+  name: $REDIS_ENTERPRISE_REMOTE_CLUSTER_02
+type: Opaque
+EOF
+```
+    
+    
+### 6. Create RedisEnterpriseRemoteCluster resources
+#### Create Redis Enterprise Remote Cluster resource for the first REC
+```shell script
+# Connect to the first GKE cluster and Redis Enterprise namespace
+gcloud container clusters get-credentials $CLUSTER_NAME_01 --region $CLUSTER_LOCATION_01 --project $PROJECT_ID
+kubectl config set-context --current --namespace=$CLUSTER_LOCATION_01
+export DNS_SUFFIX=istio.k8s.redis.com
+
 kubectl apply -f - <<EOF
 apiVersion: app.redislabs.com/v1alpha1
 kind: RedisEnterpriseRemoteCluster
 metadata:
-  name: rerc-$CLUSTER_NAME_01
+  name: $REDIS_ENTERPRISE_REMOTE_CLUSTER_01
 spec:
   recName: redis-enterprise
   recNamespace: $CLUSTER_LOCATION_01
   apiFqdnUrl: api.${CLUSTER_LOCATION_01}.${DNS_SUFFIX}
   dbFqdnSuffix: -db.${CLUSTER_LOCATION_01}.${DNS_SUFFIX}
-  secretName: redis-enterprise
+  secretName: $REDIS_ENTERPRISE_REMOTE_CLUSTER_01
 EOF
 ```
     
-#### For REC-2:
-```
+#### Create Redis Enterprise Remote Cluster resource for the second REC
+```shell script
+# Connect to the second GKE cluster and Redis Enterprise namespace
+gcloud container clusters get-credentials $CLUSTER_NAME_01 --region $CLUSTER_LOCATION_02 --project $PROJECT_ID
+kubectl config set-context --current --namespace=$CLUSTER_LOCATION_02
+export DNS_SUFFIX=istio.k8s.redis.com
+
 kubectl apply -f - <<EOF
 apiVersion: app.redislabs.com/v1alpha1
 kind: RedisEnterpriseRemoteCluster
 metadata:
-  name: rerc-$CLUSTER_NAME_02
+  name: $REDIS_ENTERPRISE_REMOTE_CLUSTER_02
 spec:
   recName: redis-enterprise
   recNamespace: $CLUSTER_LOCATION_02
   apiFqdnUrl: api.${CLUSTER_LOCATION_02}.${DNS_SUFFIX}
   dbFqdnSuffix: -db.${CLUSTER_LOCATION_02}.${DNS_SUFFIX}
-  secretName: redis-enterprise
+  secretName: $REDIS_ENTERPRISE_REMOTE_CLUSTER_02
 EOF
 ```
-
+    
 ### 7. Create Active-Active database (REAADB) 
 https://docs.redis.com/latest/kubernetes/active-active/preview/create-reaadb/ 
