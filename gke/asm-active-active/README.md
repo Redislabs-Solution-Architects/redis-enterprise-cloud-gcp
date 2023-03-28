@@ -206,32 +206,6 @@ spec:
   nodes: 3
 EOF
 ```
-##### Hooking up the Admission controller directly with Kubernetes:
-Wait for the secret to be created
-```shell script
-kubectl get secret admission-tls
-NAME            TYPE     DATA   AGE
-admission-tls   Opaque   2      2m43s
-```
-Enable the Kubernetes webhook using the generated certificate stored in a kubernetes secret:
-**NOTE**: One must replace REPLACE_WITH_NAMESPACE in the following command with the namespace the REC was installed into.
-
-```shell script
-# save cert
-wget https://raw.githubusercontent.com/RedisLabs/redis-enterprise-k8s-docs/master/admission/webhook.yaml
-CERT=`kubectl get secret admission-tls -o jsonpath='{.data.cert}'`
-sed "s/NAMESPACE_OF_SERVICE_ACCOUNT/$CLUSTER_LOCATION_01/g" webhook.yaml | kubectl create -f -
-# create patch file
-cat > modified-webhook.yaml <<EOF
-webhooks:
-- name: redisenterprise.admission.redislabs
-  clientConfig:
-    caBundle: $CERT
-  admissionReviewVersions: ["v1beta1"]
-EOF
-# patch webhook with caBundle
-kubectl patch ValidatingWebhookConfiguration redis-enterprise-admission --patch "$(cat modified-webhook.yaml)"
-```
     
 ##### Enable Active-Active controllers:
 ```
@@ -335,24 +309,34 @@ Events:
   Normal  EnsuringLoadBalancer  17m   service-controller  Ensuring load balancer
   Normal  EnsuredLoadBalancer   17m   service-controller  Ensured load balancer
 ```
-
-##### Create RedisEnterpriseRemoteCluster resources:
+    
+##### Hooking up the Admission controller directly with Kubernetes:
+Wait for the secret to be created
+```shell script
+kubectl get secret admission-tls
+NAME            TYPE     DATA   AGE
+admission-tls   Opaque   2      2m43s
 ```
-kubectl apply -f - <<EOF
-apiVersion: app.redislabs.com/v1alpha1
-kind: RedisEnterpriseRemoteCluster
-metadata:
-  name: rerc-$CLUSTER_NAME_01
-spec:
-  recName: redis-enterprise
-  recNamespace: $CLUSTER_LOCATION_01
-  apiFqdnUrl: api.${CLUSTER_LOCATION_01}.${DNS_SUFFIX}
-  dbFqdnSuffix: -db.${CLUSTER_LOCATION_01}.${DNS_SUFFIX}
-  secretName: redis-enterprise
+Enable the Kubernetes webhook using the generated certificate stored in a kubernetes secret:
+**NOTE**: One must replace REPLACE_WITH_NAMESPACE in the following command with the namespace the REC was installed into.
+
+```shell script
+# save cert
+wget https://raw.githubusercontent.com/RedisLabs/redis-enterprise-k8s-docs/master/admission/webhook.yaml
+CERT=`kubectl get secret admission-tls -o jsonpath='{.data.cert}'`
+sed "s/NAMESPACE_OF_SERVICE_ACCOUNT/$CLUSTER_LOCATION_01/g" webhook.yaml | kubectl create -f -
+# create patch file
+cat > modified-webhook.yaml <<EOF
+webhooks:
+- name: redisenterprise.admission.redislabs
+  clientConfig:
+    caBundle: $CERT
+  admissionReviewVersions: ["v1beta1"]
 EOF
+# patch webhook with caBundle
+kubectl patch ValidatingWebhookConfiguration redis-enterprise-admission --patch "$(cat modified-webhook.yaml)"
 ```
-
-              
+                
 #### Install Redis Enterprise Operator & Redis Enterprise Cluster on second GKE cluster:
 ```
 gcloud container clusters get-credentials $CLUSTER_NAME_02 --region $CLUSTER_LOCATION_02 --project $PROJECT_ID
@@ -372,33 +356,7 @@ spec:
   nodes: 3
 EOF
 ```
-##### Hooking up the Admission controller directly with Kubernetes:
-Wait for the secret to be created
-```shell script
-kubectl get secret admission-tls
-NAME            TYPE     DATA   AGE
-admission-tls   Opaque   2      2m43s
-```
-Enable the Kubernetes webhook using the generated certificate stored in a kubernetes secret:
-**NOTE**: One must replace REPLACE_WITH_NAMESPACE in the following command with the namespace the REC was installed into.
-
-```shell script
-# save cert
-wget https://raw.githubusercontent.com/RedisLabs/redis-enterprise-k8s-docs/master/admission/webhook.yaml
-CERT=`kubectl get secret admission-tls -o jsonpath='{.data.cert}'`
-sed "s/NAMESPACE_OF_SERVICE_ACCOUNT/$CLUSTER_LOCATION_02/g" webhook.yaml | kubectl create -f -
-# create patch file
-cat > modified-webhook.yaml <<EOF
-webhooks:
-- name: redisenterprise.admission.redislabs
-  clientConfig:
-    caBundle: $CERT
-  admissionReviewVersions: ["v1beta1"]
-EOF
-# patch webhook with caBundle
-kubectl patch ValidatingWebhookConfiguration redis-enterprise-admission --patch "$(cat modified-webhook.yaml)"
-```
-    
+         
 ##### Enable Active-Active controllers:
 ```
 kubectl apply -f https://raw.githubusercontent.com/RedisLabs/redis-enterprise-k8s-docs/master/crds/reaadb_crd.yaml
@@ -465,8 +423,56 @@ Verify Redis Enterprise endpoints are accessible through gateway:
 ```
 kubectl describe svc istio-ingressgateway -n istio-system
 ```
+    
+##### Hooking up the Admission controller directly with Kubernetes:
+Wait for the secret to be created
+```shell script
+kubectl get secret admission-tls
+NAME            TYPE     DATA   AGE
+admission-tls   Opaque   2      2m43s
+```
+Enable the Kubernetes webhook using the generated certificate stored in a kubernetes secret:
+**NOTE**: One must replace REPLACE_WITH_NAMESPACE in the following command with the namespace the REC was installed into.
 
-##### Create RedisEnterpriseRemoteCluster resources:
+```shell script
+# save cert
+wget https://raw.githubusercontent.com/RedisLabs/redis-enterprise-k8s-docs/master/admission/webhook.yaml
+CERT=`kubectl get secret admission-tls -o jsonpath='{.data.cert}'`
+sed "s/NAMESPACE_OF_SERVICE_ACCOUNT/$CLUSTER_LOCATION_02/g" webhook.yaml | kubectl create -f -
+# create patch file
+cat > modified-webhook.yaml <<EOF
+webhooks:
+- name: redisenterprise.admission.redislabs
+  clientConfig:
+    caBundle: $CERT
+  admissionReviewVersions: ["v1beta1"]
+EOF
+# patch webhook with caBundle
+kubectl patch ValidatingWebhookConfiguration redis-enterprise-admission --patch "$(cat modified-webhook.yaml)"
+```
+    
+### 5. Collect REC credentials
+https://docs.redis.com/latest/kubernetes/active-active/preview/prepare-clusters/#collect-rec-credentials
+
+
+### 6. Create RedisEnterpriseRemoteCluster resources
+#### For REC-1:
+```
+kubectl apply -f - <<EOF
+apiVersion: app.redislabs.com/v1alpha1
+kind: RedisEnterpriseRemoteCluster
+metadata:
+  name: rerc-$CLUSTER_NAME_01
+spec:
+  recName: redis-enterprise
+  recNamespace: $CLUSTER_LOCATION_01
+  apiFqdnUrl: api.${CLUSTER_LOCATION_01}.${DNS_SUFFIX}
+  dbFqdnSuffix: -db.${CLUSTER_LOCATION_01}.${DNS_SUFFIX}
+  secretName: redis-enterprise
+EOF
+```
+    
+#### For REC-2:
 ```
 kubectl apply -f - <<EOF
 apiVersion: app.redislabs.com/v1alpha1
@@ -482,6 +488,5 @@ spec:
 EOF
 ```
 
-
-### 5. Create Active-Active database (REAADB) 
+### 7. Create Active-Active database (REAADB) 
 https://docs.redis.com/latest/kubernetes/active-active/preview/create-reaadb/ 
