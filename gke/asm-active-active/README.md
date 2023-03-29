@@ -451,18 +451,16 @@ kubectl patch ValidatingWebhookConfiguration redis-enterprise-admission --patch 
 ```
     
 ### 4. Create secrets for RedisEnterpriseRemoteCluster resources
-#### Create secret for the first Redis Enterprise (Remote) cluster
+#### Create secrets for Redis Enterprise (Remote) clusters on the first GKE cluster
 ```shell script
 # Connect to the first GKE cluster and Redis Enterprise namespace
 gcloud container clusters get-credentials $CLUSTER_NAME_01 --region $CLUSTER_LOCATION_01 --project $PROJECT_ID
 kubectl config set-context --current --namespace=$CLUSTER_LOCATION_01
-
 # Retrieve Redis Enterprise Cluster's creds
 export REDIS_ENTERPRISE_PWD_01=$(kubectl get secrets -n $CLUSTER_LOCATION_01 redis-enterprise -o jsonpath="{.data.password}")
 export REDIS_ENTERPRISE_USERNAME_01=$(kubectl get secrets -n $CLUSTER_LOCATION_01 redis-enterprise -o jsonpath="{.data.username}")
 export REDIS_ENTERPRISE_REMOTE_CLUSTER_01=rerc-$CLUSTER_LOCATION_01
-
-# Store creds in a secret
+# Store creds in a secret for the first Redis Enterprise Remote Cluster
 kubectl apply -f - <<EOF
 apiVersion: v1
 data:
@@ -474,8 +472,6 @@ metadata:
 type: Opaque
 EOF
 ```
-   
-#### Create secret for the second Redis Enterprise (Remote) cluster
 ```shell script
 # Connect to the second GKE cluster and Redis Enterprise namespace
 gcloud container clusters get-credentials $CLUSTER_NAME_02 --region $CLUSTER_LOCATION_02 --project $PROJECT_ID
@@ -486,7 +482,11 @@ export REDIS_ENTERPRISE_PWD_02=$(kubectl get secrets -n $CLUSTER_LOCATION_02 red
 export REDIS_ENTERPRISE_USERNAME_02=$(kubectl get secrets -n $CLUSTER_LOCATION_02 redis-enterprise -o jsonpath="{.data.username}")
 export REDIS_ENTERPRISE_REMOTE_CLUSTER_02=rerc-$CLUSTER_LOCATION_02
 
-# Store creds in a secret
+# Connect to the first GKE cluster and Redis Enterprise namespace
+gcloud container clusters get-credentials $CLUSTER_NAME_01 --region $CLUSTER_LOCATION_01 --project $PROJECT_ID
+kubectl config set-context --current --namespace=$CLUSTER_LOCATION_01
+
+# Store creds in a secret for the second Redis Enterprise Remote Cluster
 kubectl apply -f - <<EOF
 apiVersion: v1
 data:
@@ -499,9 +499,45 @@ type: Opaque
 EOF
 ```
     
+<DO NOT RUN>
+#### Create secrets for Redis Enterprise (Remote) clusters on the second GKE cluster
+```shell script
+# Connect to the first GKE cluster and Redis Enterprise namespace
+gcloud container clusters get-credentials $CLUSTER_NAME_01 --region $CLUSTER_LOCATION_01 --project $PROJECT_ID
+kubectl config set-context --current --namespace=$CLUSTER_LOCATION_01
+# Store creds in a secret for the first Redis Enterprise Remote Cluster
+kubectl apply -f - <<EOF
+apiVersion: v1
+data:
+  password: $REDIS_ENTERPRISE_PWD_01
+  username: $REDIS_ENTERPRISE_USERNAME_01
+kind: Secret
+metadata:
+  name: redis-enterprise-$REDIS_ENTERPRISE_REMOTE_CLUSTER_01
+type: Opaque
+EOF
+
+# Connect to the second GKE cluster and Redis Enterprise namespace
+gcloud container clusters get-credentials $CLUSTER_NAME_02 --region $CLUSTER_LOCATION_02 --project $PROJECT_ID
+kubectl config set-context --current --namespace=$CLUSTER_LOCATION_02
+
+# Store creds in a secret for the second Redis Enterprise Remote Cluster
+kubectl apply -f - <<EOF
+apiVersion: v1
+data:
+  password: $REDIS_ENTERPRISE_PWD_02
+  username: $REDIS_ENTERPRISE_USERNAME_02
+kind: Secret
+metadata:
+  name: redis-enterprise-$REDIS_ENTERPRISE_REMOTE_CLUSTER_02
+type: Opaque
+EOF
+```
+<DO NOT RUN>
     
-### 5. Create RedisEnterpriseRemoteCluster resources
-#### Create Redis Enterprise Remote Cluster resource for the first REC
+    
+### 5. Create RedisEnterpriseRemoteCluster (RERC) resources
+#### Create Redis Enterprise Remote Cluster resource for the first Redis Enterprise Cluster
 ```shell script
 # Connect to the first GKE cluster and Redis Enterprise namespace
 gcloud container clusters get-credentials $CLUSTER_NAME_01 --region $CLUSTER_LOCATION_01 --project $PROJECT_ID
@@ -522,14 +558,20 @@ spec:
   secretName: redis-enterprise-$REDIS_ENTERPRISE_REMOTE_CLUSTER_01
 EOF
 ```
-    
-#### Create Redis Enterprise Remote Cluster resource for the second REC
+Verify RedisEnterpriseRemoteCluster creation
 ```shell script
-# Connect to the second GKE cluster and Redis Enterprise namespace
-gcloud container clusters get-credentials $CLUSTER_NAME_01 --region $CLUSTER_LOCATION_02 --project $PROJECT_ID
-kubectl config set-context --current --namespace=$CLUSTER_LOCATION_02
-export REDIS_ENTERPRISE_REMOTE_CLUSTER_02=rerc-$CLUSTER_LOCATION_02
-export DNS_SUFFIX=istio.k8s.redis.com
+kubectl get rerc $REDIS_ENTERPRISE_REMOTE_CLUSTER_01
+```
+On success, you should have output similar to the following
+```
+NAME               STATUS   SPEC STATUS   LOCAL
+rerc-us-central1   Active   Valid         true
+```
+    
+#### Create Redis Enterprise Remote Cluster resource for the second Redis Enterprise Cluster
+```shell script
+gcloud container clusters get-credentials $CLUSTER_NAME_01 --region $CLUSTER_LOCATION_01 --project $PROJECT_ID
+kubectl config set-context --current --namespace=$CLUSTER_LOCATION_01
 
 kubectl apply -f - <<EOF
 apiVersion: app.redislabs.com/v1alpha1
@@ -544,6 +586,31 @@ spec:
   secretName: redis-enterprise-$REDIS_ENTERPRISE_REMOTE_CLUSTER_02
 EOF
 ```
+Verify RedisEnterpriseRemoteCluster creation
+```shell script
+kubectl get rerc $REDIS_ENTERPRISE_REMOTE_CLUSTER_02
+```
+On success, you should have output similar to the following
+```
+NAME            STATUS   SPEC STATUS   LOCAL
+rerc-us-west1   Active   Valid         true
+```
     
 ### 6. Create Active-Active database (REAADB) 
-https://docs.redis.com/latest/kubernetes/active-active/preview/create-reaadb/ 
+```shell script
+gcloud container clusters get-credentials $CLUSTER_NAME_01 --region $CLUSTER_LOCATION_01 --project $PROJECT_ID
+kubectl config set-context --current --namespace=$CLUSTER_LOCATION_01
+
+kubectl apply -f - <<EOF
+apiVersion: app.redislabs.com/v1alpha1
+kind: RedisEnterpriseActiveActiveDatabase
+metadata:
+  name: example-aadb-1
+spec:
+  participatingClusters:
+    - name: $REDIS_ENTERPRISE_REMOTE_CLUSTER_01
+    - name: $REDIS_ENTERPRISE_REMOTE_CLUSTER_02
+  globalConfigurations:
+    shardCount: 3
+EOF
+```
