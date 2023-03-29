@@ -499,7 +499,7 @@ type: Opaque
 EOF
 ```
     
-`DO NOT RUN`
+`DO NOT RUN BELOW`
 #### Create secrets for Redis Enterprise (Remote) clusters on the second GKE cluster
 ```shell script
 # Connect to the first GKE cluster and Redis Enterprise namespace
@@ -533,10 +533,10 @@ metadata:
 type: Opaque
 EOF
 ```
-`DO NOT RUN`
+`DO NOT RUN ABOVE`
     
     
-### 5. Create RedisEnterpriseRemoteCluster (RERC) resources
+### 5. Create RedisEnterpriseRemoteCluster (RERC) resources on the first Redis Enterprise Cluster's namespace
 #### Create Redis Enterprise Remote Cluster resource for the first Redis Enterprise Cluster
 ```shell script
 # Connect to the first GKE cluster and Redis Enterprise namespace
@@ -596,7 +596,7 @@ NAME            STATUS   SPEC STATUS   LOCAL
 rerc-us-west1   Active   Valid         true
 ```
     
-### 6. Create Active-Active database (REAADB) 
+### 6. Create Active-Active database (REAADB) on the first Redis Enterprise Cluster's namespace
 ```shell script
 gcloud container clusters get-credentials $CLUSTER_NAME_01 --region $CLUSTER_LOCATION_01 --project $PROJECT_ID
 kubectl config set-context --current --namespace=$CLUSTER_LOCATION_01
@@ -614,3 +614,13 @@ spec:
     shardCount: 3
 EOF
 ```
+Verify RedisEnterpriseActiveActiveDatabase creation
+```shell script
+kubectl get reaadb example-aadb-1
+```
+On success, you should have output similar to the following
+```
+NAME             STATUS   SPEC STATUS   LINKED REDBS
+example-aadb-1   active   Valid         
+```
+
