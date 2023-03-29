@@ -206,6 +206,19 @@ spec:
 EOF
 ```
     
+##### Configure external routing on the Redis Enterprise Cluster
+```shell script
+kubectl patch cm  operator-environment-config --type merge --patch "{\"data\": \
+  {\"ENABLE_ALPHA_FEATURES\":\"true\"}}"
+```
+```shell script
+kubectl patch rec redis-enterprise --type merge --patch "{\"spec\": \
+    {\"ingressOrRouteSpec\": \
+      {\"apiFqdnUrl\": \"api.${CLUSTER_LOCATION_01}.${DNS_SUFFIX}\", \
+      \"dbFqdnSuffix\": \".${CLUSTER_LOCATION_01}.${DNS_SUFFIX}\", \
+      \"method\": \"istio\"}}}"
+```
+    
 ##### Enable Active-Active controllers:
 ```shell script
 kubectl apply -f https://raw.githubusercontent.com/RedisLabs/redis-enterprise-k8s-docs/master/crds/reaadb_crd.yaml
@@ -215,6 +228,7 @@ kubectl patch cm  operator-environment-config --type merge --patch "{\"data\": \
     \"REMOTE_CLUSTER_CONTROLLER_ENABLED\":\"true\"}}"
 ```
     
+`` DO NOT RUN BELOW ``
 ##### Configure Istio for Redis Enterprise Kubernetes operator to allow external access to Redis Enterprise databases:
 ```shell script
 export DNS_SUFFIX=istio.k8s.redis.com
@@ -270,6 +284,8 @@ spec:
           number: 8443
 EOF
 ```
+``DO NOT RUN ABOVE``
+    
 Verify Redis Enterprise endpoints are accessible through gateway:
 ```shell script
 kubectl describe svc istio-ingressgateway -n istio-system
@@ -355,7 +371,20 @@ spec:
   nodes: 3
 EOF
 ```
-         
+    
+##### Configure external routing on the Redis Enterprise Cluster
+```shell script
+kubectl patch cm  operator-environment-config --type merge --patch "{\"data\": \
+  {\"ENABLE_ALPHA_FEATURES\":\"true\"}}"
+```
+```shell script
+kubectl patch rec redis-enterprise --type merge --patch "{\"spec\": \
+    {\"ingressOrRouteSpec\": \
+      {\"apiFqdnUrl\": \"api.${CLUSTER_LOCATION_02}.${DNS_SUFFIX}\", \
+      \"dbFqdnSuffix\": \".${CLUSTER_LOCATION_02}.${DNS_SUFFIX}\", \
+      \"method\": \"istio\"}}}"
+```
+    
 ##### Enable Active-Active controllers:
 ```shell script
 kubectl apply -f https://raw.githubusercontent.com/RedisLabs/redis-enterprise-k8s-docs/master/crds/reaadb_crd.yaml
@@ -365,6 +394,7 @@ kubectl patch cm  operator-environment-config --type merge --patch "{\"data\": \
     \"REMOTE_CLUSTER_CONTROLLER_ENABLED\":\"true\"}}"
 ```
     
+`` DO NOT RUN BELOW ``
 ##### Configure Istio for Redis Enterprise Kubernetes operator to allow external access to Redis Enterprise databases:
 ```shell script
 kubectl apply -f - <<EOF
@@ -418,6 +448,8 @@ spec:
           number: 8443
 EOF
 ```
+`` DO NOT RUN ABOVE ``
+   
 Verify Redis Enterprise endpoints are accessible through gateway:
 ```shell script
 kubectl describe svc istio-ingressgateway -n istio-system
@@ -623,4 +655,5 @@ On success, you should have output similar to the following
 NAME             STATUS   SPEC STATUS   LINKED REDBS
 example-aadb-1   active   Valid         
 ```
+
 
