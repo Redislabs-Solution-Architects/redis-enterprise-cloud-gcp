@@ -1,4 +1,4 @@
-# [WORK IN PROGRESS] Active-Active Setup with Anthos Service Mesh
+# Active-Active Setup with Anthos Service Mesh
 
 ## High Level Workflow
 The following is the high level workflow which you will follow:
