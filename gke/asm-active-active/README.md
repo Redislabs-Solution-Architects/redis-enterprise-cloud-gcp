@@ -536,7 +536,7 @@ EOF
 `DO NOT RUN ABOVE`
     
     
-### 5. Create RedisEnterpriseRemoteCluster (RERC) resources on the first Redis Enterprise Cluster's namespace
+### 5. Create RedisEnterpriseRemoteCluster (RERC) resources in the first Redis Enterprise Cluster's namespace
 #### Create Redis Enterprise Remote Cluster resource for the first Redis Enterprise Cluster
 ```shell script
 # Connect to the first GKE cluster and Redis Enterprise namespace
@@ -596,7 +596,7 @@ NAME            STATUS   SPEC STATUS   LOCAL
 rerc-us-west1   Active   Valid         true
 ```
     
-### 6. Create Active-Active database (REAADB) on the first Redis Enterprise Cluster's namespace
+### 6. Create Active-Active database (REAADB) in the first Redis Enterprise Cluster's namespace
 ```shell script
 gcloud container clusters get-credentials $CLUSTER_NAME_01 --region $CLUSTER_LOCATION_01 --project $PROJECT_ID
 kubectl config set-context --current --namespace=$CLUSTER_LOCATION_01
