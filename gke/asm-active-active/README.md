@@ -2,19 +2,21 @@
 
 ## High Level Workflow
 The following is the high level workflow which you will follow:
-1. Clone this repo
-2. Create two Active-Active participating GKE clusters
-3. Install Anthos Service Mesh (ASM) and Ingress Gateway
-4. Install/Configure Redis Enterprise Operator & Redis Enteprise Cluster
-5. ..
-6. ..
-
+1. Create two Active-Active participating GKE clusters
+2. Install Anthos Service Mesh (ASM) and Ingress Gateway
+3. Install/Configure Redis Enterprise Operator & Redis Enteprise Cluster
+4. Create secrets for RedisEnterpriseRemoteCluster resources
+5. Create RedisEnterpriseRemoteCluster (RERC) resources in the first Redis Enterprise Cluster's namespace
+6. Create Active-Active database (REAADB) in the first Redis Enterprise Cluster's namespace
+7. Verify the Active-Active database
+    
 ### Prerequisites:
 Please ensure following pre-requisites are installed and configured.
 - [gcloud CLI](https://cloud.google.com/sdk/docs/install)
 - wget
 - jq
     
+     
 ### 1. Create two Active-Active participating GKE clusters
 #### Create the first GKE cluster:
 ```shell script
@@ -228,64 +230,6 @@ kubectl patch cm  operator-environment-config --type merge --patch "{\"data\": \
     \"REMOTE_CLUSTER_CONTROLLER_ENABLED\":\"true\"}}"
 ```
     
-`` DO NOT RUN BELOW ``
-##### Configure Istio for Redis Enterprise Kubernetes operator to allow external access to Redis Enterprise databases:
-```shell script
-export DNS_SUFFIX=istio.k8s.redis.com
-
-kubectl apply -f - <<EOF
-apiVersion: networking.istio.io/v1beta1
-kind: Gateway
-metadata:
-  name: redis-gateway
-spec:
-  selector:
-    istio: ingressgateway 
-  servers:
-  - hosts:
-    - '*.${CLUSTER_LOCATION_01}.${DNS_SUFFIX}'
-    port:
-      name: https
-      number: 443
-      protocol: HTTPS
-    tls:
-      mode: PASSTHROUGH
-EOF
-```
-```shell script
-kubectl apply -f - <<EOF
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: redis-vs
-spec:
-  gateways:
-  - redis-gateway
-  hosts:
-  - '*.${CLUSTER_LOCATION_01}.${DNS_SUFFIX}'
-  tls:
-  - match:
-    - port: 443
-      sniHosts:
-      - api.${CLUSTER_LOCATION_01}.${DNS_SUFFIX}
-    route:
-    - destination:
-        host: redis-enterprise
-        port:
-          number: 9443
-  - match:
-    - port: 443
-      sniHosts:
-      - redis-enterprise-ui.${CLUSTER_LOCATION_01}.${DNS_SUFFIX}
-    route:
-    - destination:
-        host: redis-enterprise-ui
-        port:
-          number: 8443
-EOF
-```
-``DO NOT RUN ABOVE``
-    
 Verify Redis Enterprise endpoints are accessible through gateway:
 ```shell script
 kubectl describe svc istio-ingressgateway -n istio-system
@@ -394,62 +338,6 @@ kubectl patch cm  operator-environment-config --type merge --patch "{\"data\": \
     \"REMOTE_CLUSTER_CONTROLLER_ENABLED\":\"true\"}}"
 ```
     
-`` DO NOT RUN BELOW ``
-##### Configure Istio for Redis Enterprise Kubernetes operator to allow external access to Redis Enterprise databases:
-```shell script
-kubectl apply -f - <<EOF
-apiVersion: networking.istio.io/v1beta1
-kind: Gateway
-metadata:
-  name: redis-gateway
-spec:
-  selector:
-    istio: ingressgateway 
-  servers:
-  - hosts:
-    - '*.${CLUSTER_LOCATION_02}.${DNS_SUFFIX}'
-    port:
-      name: https
-      number: 443
-      protocol: HTTPS
-    tls:
-      mode: PASSTHROUGH
-EOF
-```
-```shell script
-kubectl apply -f - <<EOF
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: redis-vs
-spec:
-  gateways:
-  - redis-gateway
-  hosts:
-  - '*.${CLUSTER_LOCATION_02}.${DNS_SUFFIX}'
-  tls:
-  - match:
-    - port: 443
-      sniHosts:
-      - api.${CLUSTER_LOCATION_02}.${DNS_SUFFIX}
-    route:
-    - destination:
-        host: redis-enterprise
-        port:
-          number: 9443
-  - match:
-    - port: 443
-      sniHosts:
-      - redis-enterprise-ui.${CLUSTER_LOCATION_02}.${DNS_SUFFIX}
-    route:
-    - destination:
-        host: redis-enterprise-ui
-        port:
-          number: 8443
-EOF
-```
-`` DO NOT RUN ABOVE ``
-   
 Verify Redis Enterprise endpoints are accessible through gateway:
 ```shell script
 kubectl describe svc istio-ingressgateway -n istio-system
@@ -530,44 +418,7 @@ metadata:
 type: Opaque
 EOF
 ```
-    
-`DO NOT RUN BELOW`
-#### Create secrets for Redis Enterprise (Remote) clusters on the second GKE cluster
-```shell script
-# Connect to the first GKE cluster and Redis Enterprise namespace
-gcloud container clusters get-credentials $CLUSTER_NAME_01 --region $CLUSTER_LOCATION_01 --project $PROJECT_ID
-kubectl config set-context --current --namespace=$CLUSTER_LOCATION_01
-# Store creds in a secret for the first Redis Enterprise Remote Cluster
-kubectl apply -f - <<EOF
-apiVersion: v1
-data:
-  password: $REDIS_ENTERPRISE_PWD_01
-  username: $REDIS_ENTERPRISE_USERNAME_01
-kind: Secret
-metadata:
-  name: redis-enterprise-$REDIS_ENTERPRISE_REMOTE_CLUSTER_01
-type: Opaque
-EOF
-
-# Connect to the second GKE cluster and Redis Enterprise namespace
-gcloud container clusters get-credentials $CLUSTER_NAME_02 --region $CLUSTER_LOCATION_02 --project $PROJECT_ID
-kubectl config set-context --current --namespace=$CLUSTER_LOCATION_02
-
-# Store creds in a secret for the second Redis Enterprise Remote Cluster
-kubectl apply -f - <<EOF
-apiVersion: v1
-data:
-  password: $REDIS_ENTERPRISE_PWD_02
-  username: $REDIS_ENTERPRISE_USERNAME_02
-kind: Secret
-metadata:
-  name: redis-enterprise-$REDIS_ENTERPRISE_REMOTE_CLUSTER_02
-type: Opaque
-EOF
-```
-`DO NOT RUN ABOVE`
-    
-    
+     
 ### 5. Create RedisEnterpriseRemoteCluster (RERC) resources in the first Redis Enterprise Cluster's namespace
 #### Create Redis Enterprise Remote Cluster resource for the first Redis Enterprise Cluster
 ```shell script
@@ -586,7 +437,7 @@ spec:
   recName: redis-enterprise
   recNamespace: $CLUSTER_LOCATION_01
   apiFqdnUrl: api.${CLUSTER_LOCATION_01}.${DNS_SUFFIX}
-  dbFqdnSuffix: -db.${CLUSTER_LOCATION_01}.${DNS_SUFFIX}
+  dbFqdnSuffix: .${CLUSTER_LOCATION_01}.${DNS_SUFFIX}
   secretName: redis-enterprise-$REDIS_ENTERPRISE_REMOTE_CLUSTER_01
 EOF
 ```
@@ -614,7 +465,7 @@ spec:
   recName: redis-enterprise
   recNamespace: $CLUSTER_LOCATION_02
   apiFqdnUrl: api.${CLUSTER_LOCATION_02}.${DNS_SUFFIX}
-  dbFqdnSuffix: -db.${CLUSTER_LOCATION_02}.${DNS_SUFFIX}
+  dbFqdnSuffix: .${CLUSTER_LOCATION_02}.${DNS_SUFFIX}
   secretName: redis-enterprise-$REDIS_ENTERPRISE_REMOTE_CLUSTER_02
 EOF
 ```
@@ -655,5 +506,43 @@ On success, you should have output similar to the following
 NAME             STATUS   SPEC STATUS   LINKED REDBS
 example-aadb-1   active   Valid         
 ```
+    
+### 7. Verify the Active-Active database
+#### Create a key in one of the Active-Active database instances ($CLUSTER_LOCATION_01)
+```shell script
+gcloud container clusters get-credentials $CLUSTER_NAME_01 --region $CLUSTER_LOCATION_01 --project $PROJECT_ID
+kubectl config set-context --current --namespace=$CLUSTER_LOCATION_01
 
+kubectl exec -it pod/redis-enterprise-0 bash
+```
+Once inside the bash shell:
+```shell script
+redis-cli -h example-aadb-1-headless  -p <db port>
+# For example,
+redis-cli -h example-aadb-1-headless  -p 12336
+```
+Once inside redis-cli shell:
+```shell script
+set foo bar
+get foo
+```
+    
+#### Verify the same key & value in the other Active-Active database instance ($CLUSTER_LOCATION_02)
+```shell script
+gcloud container clusters get-credentials $CLUSTER_NAME_02 --region $CLUSTER_LOCATION_02 --project $PROJECT_ID
+kubectl config set-context --current --namespace=$CLUSTER_LOCATION_02
 
+kubectl exec -it pod/redis-enterprise-0 bash
+```
+Once inside the bash shell:
+```shell script
+redis-cli -h example-aadb-1-headless  -p <db port>
+# For example,
+redis-cli -h example-aadb-1-headless  -p 12336
+```
+Once inside redis-cli shell:
+```shell script
+keys *
+get foo
+```
+    
