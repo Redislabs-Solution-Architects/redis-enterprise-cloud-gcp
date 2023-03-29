@@ -499,7 +499,7 @@ type: Opaque
 EOF
 ```
     
-<DO NOT RUN>
+`DO NOT RUN`
 #### Create secrets for Redis Enterprise (Remote) clusters on the second GKE cluster
 ```shell script
 # Connect to the first GKE cluster and Redis Enterprise namespace
@@ -533,7 +533,7 @@ metadata:
 type: Opaque
 EOF
 ```
-<DO NOT RUN>
+`DO NOT RUN`
     
     
 ### 5. Create RedisEnterpriseRemoteCluster (RERC) resources
