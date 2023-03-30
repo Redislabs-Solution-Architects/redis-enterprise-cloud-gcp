@@ -276,9 +276,7 @@ kubectl get secret admission-tls
 NAME            TYPE     DATA   AGE
 admission-tls   Opaque   2      2m43s
 ```
-Enable the Kubernetes webhook using the generated certificate stored in a kubernetes secret:
-**NOTE**: One must replace REPLACE_WITH_NAMESPACE in the following command with the namespace the REC was installed into.
-
+Enable the Kubernetes webhook using the generated certificate stored in a kubernetes secret:  
 ```shell script
 # save cert
 wget https://raw.githubusercontent.com/RedisLabs/redis-enterprise-k8s-docs/master/admission/webhook.yaml
@@ -350,9 +348,7 @@ kubectl get secret admission-tls
 NAME            TYPE     DATA   AGE
 admission-tls   Opaque   2      2m43s
 ```
-Enable the Kubernetes webhook using the generated certificate stored in a kubernetes secret:
-**NOTE**: One must replace REPLACE_WITH_NAMESPACE in the following command with the namespace the REC was installed into.
-
+Enable the Kubernetes webhook using the generated certificate stored in a kubernetes secret:  
 ```shell script
 # save cert
 wget https://raw.githubusercontent.com/RedisLabs/redis-enterprise-k8s-docs/master/admission/webhook.yaml
