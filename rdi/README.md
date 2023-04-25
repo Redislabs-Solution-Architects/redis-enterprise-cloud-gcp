@@ -91,7 +91,10 @@ popd
 Create a fully managed Redis Enterprise database in Google Cloud with HA (replication) enabled:
 Capture the Public Endpoint information for later use:
 ![redb endpoint](./img/redb-endpoint.png)
-Make sure High availability is On as RDI requires replication and sends WAIT commands:
+Make sure High availability is On as the RDI in this setup requires **replication** and will send WAIT commands because the `wait_enabled` flag is set to `true` under the `applier` section:
+ wait_enabled: true
+
+:
 ![redb ha](./img/redb-ha.png)
 Capture the default user's password for later use:
 ![redb ha](./img/redb-password.png)
