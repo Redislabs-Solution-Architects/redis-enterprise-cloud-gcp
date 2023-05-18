@@ -18,7 +18,7 @@ cd pulumi
 ```
     
 #### 2. Install Pulumi
-Follow this [link](https://www.pulumi.com/docs/install/) to install Pulumi if you have done so already
+Follow this [link](https://www.pulumi.com/docs/install/) to install Pulumi if you have not done so already.
     
 #### 3. Set up a Pulumi project and Install the Redis Cloud provider package
 ```bash
@@ -28,12 +28,14 @@ pulumi new rediscloud-python
 ```
 You will respond to the prompts similar to the below screenshot:
 ![New Pulumi Project Prompt](./img/new_pulumi_project.png)
+    
 If you plan to create a subscription in Redis Enterprise Cloud Direct account, proceed to section 4a. For Google Cloud Marketplace account, proceed to section 4b.
     
     
 #### 4. Create a subscription and a database in Redis Enterprise Cloud Direct or Google Cloud Marketplace
 ##### 4a. Redis Enterprise Cloud Direct
-You'll need to answer cardType, lastFourNumbers, rediscloud:apiKey, and rediscloud:secretKey.
+You'll need to answer cardType, lastFourNumbers, rediscloud:apiKey, and rediscloud:secretKey to the prompts above.   
+Run the following command to replace the `__main__.py` file:
 ```bash
 cp ../rec-direct/__main__.py .
 ```
@@ -43,7 +45,8 @@ pulumi up
 ```
         
 ##### 4b. Google Cloud Marketplace
-Since this is for Google Cloud Marketplace, you'll hit the `enter` or `return` key for cardType and lastFourNumbers as the deployment will be charged to your Google Cloud Marketplace's billing account. That said, you'll need to provide your Redis Cloud Access Key for rediscloud:apiKey` and Redis Cloud Secret Key for `rediscloud:secretKey` only.
+Since this is for Google Cloud Marketplace, you'll hit the `enter` or `return` key to the prompts above for `cardType` and `lastFourNumbers` as the deployment will be charged to your Google Cloud Marketplace's billing account. That said, you'll need to provide your Redis Cloud Access Key for rediscloud:apiKey` and Redis Cloud Secret Key for `rediscloud:secretKey` only.    
+Run the following command to replace the `__main__.py` file:
 ```bash
 cp ../gcp-mp/__main__.py .
 ```
@@ -62,6 +65,6 @@ Run the follwoing command and follow the prompts to delete your subscription:
 pulumi destroy
 ```
 You should see output similar to the below screenshot:
-![pulumi destroy](.img/pulumi_destroy.png)
+![pulumi destroy](./img/pulumi_destroy.png)
 
 
