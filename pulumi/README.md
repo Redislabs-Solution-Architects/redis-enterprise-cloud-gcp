@@ -45,7 +45,7 @@ pulumi up
 ```
         
 ##### 4b. Google Cloud Marketplace
-Since this is for Google Cloud Marketplace, you'll hit the `enter` or `return` key to the prompts above for `cardType` and `lastFourNumbers` as the deployment will be charged to your Google Cloud Marketplace's billing account. That said, you'll need to provide your Redis Cloud Access Key for rediscloud:apiKey` and Redis Cloud Secret Key for `rediscloud:secretKey` only.    
+Since this is for Google Cloud Marketplace, you'll hit the `enter` or `return` key to the prompts above for `cardType` and `lastFourNumbers` as the deployment will be charged to your Google Cloud Marketplace's billing account. That said, you'll need to provide your Redis Cloud Access Key for `rediscloud:apiKey` and Redis Cloud Secret Key for `rediscloud:secretKey` only.    
 Run the following command to replace the `__main__.py` file:
 ```bash
 cp ../gcp-mp/__main__.py .
