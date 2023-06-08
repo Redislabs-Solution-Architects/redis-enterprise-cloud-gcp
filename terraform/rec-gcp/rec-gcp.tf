@@ -19,7 +19,7 @@ terraform {
  required_providers {
    rediscloud = {
      source = "RedisLabs/rediscloud"
-     version = "0.2.1"
+     version = "1.1.1"
    }
  }
 }
@@ -27,7 +27,7 @@ terraform {
 # Provide your credit card details
 data "rediscloud_payment_method" "card" {
  card_type = "Visa"
- last_four_numbers = "1234"
+ last_four_numbers = "8888"
 }
  
 # Generates a random password for the database
@@ -36,38 +36,51 @@ resource "random_password" "passwords" {
  length = 20
  upper = true
  lower = true
- number = true
+ numeric = true
  special = false
 }
  
-resource "rediscloud_subscription" "example" {
- name = "gilbert-demo-tf-subscription"
- payment_method_id = data.rediscloud_payment_method.card.id
- memory_storage = "ram"
- 
- cloud_provider {
-   #Running in GCP on Redis Labs resources
-   provider = "GCP"
-   cloud_account_id = 1
-   region {
-     region = "us-west1"
-     networking_deployment_cidr = "192.168.0.0/24"
-     preferred_availability_zones = ["us-west1-a"]
-   }
- }
- database {
-   name = "db-json"
-   protocol = "redis"
-   memory_limit_in_gb = 1
-   replication = true
-   data_persistence = "aof-every-1-second"
-   module {
-       name = "RedisJSON"
-   }
-   throughput_measurement_by = "operations-per-second"
-   throughput_measurement_value = 10000
-   password = random_password.passwords[1].result
- }
+resource "rediscloud_subscription" "mc-example" {
+  name           = "online-boutique-sub"
+  payment_method_id = data.rediscloud_payment_method.card.id
+  memory_storage = "ram"
+
+  cloud_provider {
+    #Running in GCP on Redis resources
+    provider         = "GCP"
+    cloud_account_id = 1
+    region {
+      region                       = "us-west1"
+      networking_deployment_cidr   = "192.168.88.0/24"
+      preferred_availability_zones = []
+    }
+  }
+
+  creation_plan {
+    average_item_size_in_bytes   = 1
+    memory_limit_in_gb           = 1
+    quantity                     = 1
+    replication                  = false
+    support_oss_cluster_api      = false
+    throughput_measurement_by    = "operations-per-second"
+    throughput_measurement_value = 25000
+    modules                      = []
+  }
+}
+
+resource "rediscloud_subscription_database" "mc-example" {
+
+  subscription_id              = rediscloud_subscription.mc-example.id
+  name                         = "online-boutique-cart"
+  protocol                     = "redis"
+  memory_limit_in_gb           = 1
+  replication                  = true
+  data_persistence             = "aof-every-1-second"
+  throughput_measurement_by    = "operations-per-second"
+  throughput_measurement_value = 25000
+  average_item_size_in_bytes   = 0
+  password = random_password.passwords[1].result
+  depends_on                   = [rediscloud_subscription.mc-example]
 }
 
 data "google_compute_network" "network" {
@@ -76,7 +89,7 @@ data "google_compute_network" "network" {
 }
 
 resource "rediscloud_subscription_peering" "example-peering" {
-  subscription_id = rediscloud_subscription.example.id
+  subscription_id = rediscloud_subscription.mc-example.id
   provider_name = "GCP"
   gcp_project_id = data.google_compute_network.network.project
   gcp_network_name = data.google_compute_network.network.name
