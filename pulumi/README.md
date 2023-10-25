@@ -21,10 +21,17 @@ cd pulumi
 Follow this [link](https://www.pulumi.com/docs/install/) to install Pulumi if you have not done so already.
     
 #### 3. Set up a Pulumi project and Install the Redis Cloud provider package
+For Python:
 ```bash
 mkdir my-redis-project
 cd my-redis-project
 pulumi new rediscloud-python
+```
+For Go:
+```bash
+mkdir my-redis-go-project
+cd my-redis-go-project
+pulumi new rediscloud-go
 ```
 You will respond to the prompts similar to the below screenshot:
 ![New Pulumi Project Prompt](./img/new_pulumi_project.png)
@@ -34,12 +41,17 @@ If you plan to create a subscription in Redis Enterprise Cloud Direct account, p
     
 #### 4. Create a subscription and a database in Redis Enterprise Cloud Direct or Google Cloud Marketplace
 ##### 4a. Redis Enterprise Cloud Direct
-You'll need to answer cardType, lastFourNumbers, rediscloud:apiKey, and rediscloud:secretKey to the prompts above.   
-Run the following command to replace the `__main__.py` file:
+You'll need to answer cardType, lastFourNumbers, rediscloud:apiKey, and rediscloud:secretKey to the prompts above.    
+For `Python`, run the following command to replace the `__main__.py` file:
 ```bash
 cp ../rec-direct/__main__.py .
 ```
-Run the follwoing command and follow the prompts to provision your subscription:
+For `Go`, run the following command to replace the `main.go` file::
+```
+cp ../rec-direct/main.go .
+```
+      
+Then, run the follwoing command and follow the prompts to provision your subscription:
 ```bash
 pulumi up
 ```
