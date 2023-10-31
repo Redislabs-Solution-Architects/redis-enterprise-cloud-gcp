@@ -25,7 +25,7 @@ func main() {
 		cardId := card.Id
 
 		subscription, err := rediscloud.NewSubscription(ctx, "subscription", &rediscloud.SubscriptionArgs{
-                        Name:            pulumi.String("glau-pulumi-sub"),
+                        Name:            pulumi.String("pulumi-sub"),
 			PaymentMethod:   pulumi.String("credit-card"),
 			PaymentMethodId: pulumi.String(cardId),
 			CloudProvider: &rediscloud.SubscriptionCloudProviderArgs{
