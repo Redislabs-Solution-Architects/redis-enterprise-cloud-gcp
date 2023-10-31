@@ -70,7 +70,7 @@ Run `asmcli validate` to make sure that your project and cluster are set up as r
   --cluster_name $CLUSTER_NAME_01 \
   --cluster_location $CLUSTER_LOCATION_01 \
   --fleet_id $PROJECT_ID \
-  --output_dir ./asm_output_01
+  --output_dir $PWD/asm_output_01
 ```
 Install Anthos Service Mesh:
 ```shell script
@@ -78,7 +78,7 @@ Install Anthos Service Mesh:
   --project_id $PROJECT_ID\
   --cluster_name $CLUSTER_NAME_01 \
   --cluster_location $CLUSTER_LOCATION_01\
-  --output_dir ./asm_output_01 \
+  --output_dir $PWD//asm_output_01 \
   --enable_all \
   --ca mesh_ca
 ```
@@ -154,7 +154,7 @@ Run `asmcli validate` to make sure that your project and cluster are set up as r
   --cluster_name $CLUSTER_NAME_02 \
   --cluster_location $CLUSTER_LOCATION_02 \
   --fleet_id $PROJECT_ID \
-  --output_dir ./asm_output_02
+  --output_dir $PWD/asm_output_02
 ```
 Install Anthos Service Mesh:
 ```shell script
@@ -162,7 +162,7 @@ Install Anthos Service Mesh:
   --project_id $PROJECT_ID\
   --cluster_name $CLUSTER_NAME_02 \
   --cluster_location $CLUSTER_LOCATION_02\
-  --output_dir ./asm_output_02 \
+  --output_dir $PWD/asm_output_02 \
   --enable_all \
   --ca mesh_ca
   ```
@@ -472,7 +472,7 @@ kubectl get rerc $REDIS_ENTERPRISE_REMOTE_CLUSTER_02
 On success, you should have output similar to the following
 ```
 NAME            STATUS   SPEC STATUS   LOCAL
-rerc-us-west1   Active   Valid         true
+rerc-us-west1   Active   Valid         false
 ```
     
 ### 6. Create Active-Active database (REAADB) in the first Redis Enterprise Cluster's namespace
