@@ -175,7 +175,6 @@ export asm_version=$(kubectl get deploy -n istio-system -l app=istiod \
 kubectl label namespace istio-system istio-injection=enabled istio.io/rev=$asm_version --overwrite
 kubectl apply -f ./asm_output_02/samples/gateways/istio-ingressgateway
 kubectl apply -f ./asm_output_02/samples/gateways/istio-ingressgateway/autoscalingv2/autoscaling-v2.yaml
-```
     
 Create DNS entry in your Google Cloud environment:
 ```shell script
@@ -415,6 +414,55 @@ type: Opaque
 EOF
 ```
      
+#### Create secrets for Redis Enterprise (Remote) clusters on the second GKE cluster
+```shell script
+# Connect to the second GKE cluster and Redis Enterprise namespace
+gcloud container clusters get-credentials $CLUSTER_NAME_02 --region $CLUSTER_LOCATION_02 --project $PROJECT_ID
+kubectl config set-context --current --namespace=$CLUSTER_LOCATION_02
+
+# Retrieve Redis Enterprise Cluster's creds
+export REDIS_ENTERPRISE_PWD_02=$(kubectl get secrets -n $CLUSTER_LOCATION_02 redis-enterprise -o jsonpath="{.data.password}")
+export REDIS_ENTERPRISE_USERNAME_02=$(kubectl get secrets -n $CLUSTER_LOCATION_02 redis-enterprise -o jsonpath="{.data.username}")
+export REDIS_ENTERPRISE_REMOTE_CLUSTER_02=rerc-$CLUSTER_LOCATION_02
+    
+# Store creds in a secret for the second Redis Enterprise Remote Cluster
+kubectl apply -f - <<EOF
+apiVersion: v1
+data:
+  password: $REDIS_ENTERPRISE_PWD_02
+  username: $REDIS_ENTERPRISE_USERNAME_02
+kind: Secret
+metadata:
+  name: redis-enterprise-$REDIS_ENTERPRISE_REMOTE_CLUSTER_02
+type: Opaque
+EOF
+```
+```shell script
+# Connect to the first GKE cluster and Redis Enterprise namespace
+gcloud container clusters get-credentials $CLUSTER_NAME_01 --region $CLUSTER_LOCATION_01 --project $PROJECT_ID
+kubectl config set-context --current --namespace=$CLUSTER_LOCATION_01
+# Retrieve Redis Enterprise Cluster's creds
+export REDIS_ENTERPRISE_PWD_01=$(kubectl get secrets -n $CLUSTER_LOCATION_01 redis-enterprise -o jsonpath="{.data.password}")
+export REDIS_ENTERPRISE_USERNAME_01=$(kubectl get secrets -n $CLUSTER_LOCATION_01 redis-enterprise -o jsonpath="{.data.username}")
+export REDIS_ENTERPRISE_REMOTE_CLUSTER_01=rerc-$CLUSTER_LOCATION_01
+
+# Connect to the second GKE cluster and Redis Enterprise namespace
+gcloud container clusters get-credentials $CLUSTER_NAME_02 --region $CLUSTER_LOCATION_02 --project $PROJECT_ID
+kubectl config set-context --current --namespace=$CLUSTER_LOCATION_02
+
+# Store creds in a secret for the first Redis Enterprise Remote Cluster
+kubectl apply -f - <<EOF
+apiVersion: v1
+data:
+  password: $REDIS_ENTERPRISE_PWD_01
+  username: $REDIS_ENTERPRISE_USERNAME_01
+kind: Secret
+metadata:
+  name: redis-enterprise-$REDIS_ENTERPRISE_REMOTE_CLUSTER_01
+type: Opaque
+EOF
+```
+        
 ### 5. Create RedisEnterpriseRemoteCluster (RERC) resources in the first Redis Enterprise Cluster's namespace
 #### Create Redis Enterprise Remote Cluster resource for the first Redis Enterprise Cluster
 ```shell script
