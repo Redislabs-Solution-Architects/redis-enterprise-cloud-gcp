@@ -175,7 +175,7 @@ export asm_version=$(kubectl get deploy -n istio-system -l app=istiod \
 kubectl label namespace istio-system istio-injection=enabled istio.io/rev=$asm_version --overwrite
 kubectl apply -f ./asm_output_02/samples/gateways/istio-ingressgateway
 kubectl apply -f ./asm_output_02/samples/gateways/istio-ingressgateway/autoscalingv2/autoscaling-v2.yaml
-    
+```
 Create DNS entry in your Google Cloud environment:
 ```shell script
 export DNS_ZONE=private-redis-zone
