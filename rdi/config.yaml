@@ -1,0 +1,67 @@
+connections:
+  # Redis data DB connection details
+  # This section is for configuring the Redis database to which Redis Data Integration will connect to
+  target:
+    # Target type - Redis is the only supported type
+    type: redis
+    # Host of the Redis database to which Redis Data Integration will write the processed data
+    host: $REDIS_TARGET_DB_HOST
+    # Port for the Redis database to which Redis Data Integration will write the processed data
+    port: $REDIS_TARGET_DB_PORT
+    # User of the Redis database to which Redis Data Integration will write the processed data
+    user: default
+    # Password (if user is omitted, use this as the default database password)
+    # Comment this out if you are using one of the below password expressions
+    password: $REDIS_TARGET_DB_PASSWORD
+    # To get a password from a secret:
+    #password: ${secret:<name-of-secret>}
+
+    # To get a password from a file:
+    #password: ${file:</path/to/file>}
+
+    # To get a password from a specific property in a Java properties file:
+    #password: ${file:</path/to/file>:<property-name>}
+
+    # Make sure these files exist on the Redis Enterprise nodes that host RDI shards.
+
+    # TLS
+    # Note: If you are specifying TLS key, cert and cacert locations in `config.yaml`,
+    # make sure these files exist on the Redis Enterprise nodes that host RDI shards.
+
+    # Private key file to authenticate with
+    #key: /path/to/key
+    # Password for unlocking an encrypted private key
+    #key_password: <KEY_PASSWORD>
+    # Client certificate file to authenticate with
+    #cert: /path/to/cert
+    # CA certificate file to verify with
+    #cacert: /path/to/cacert
+applier:
+  # Interval (in seconds) on which to perform retry on failure
+  #on_failed_retry_interval: 5
+  # The batch size for reading data from source database
+  #read_batch_size: 2000
+  # Time (in ms) after which data will be read from stream even if read_batch_size was not reached
+  #duration: 100
+  # The batch size for writing data to target Redis database. Should be less or equal to the read_batch_size
+  #write_batch_size: 200
+  # Enable deduplication mechanism (default: false)
+  #dedup: <DEDUP_ENABLED>
+  # Max size of the deduplication set (default: 1024)
+  #dedup_max_size: <DEDUP_MAX_SIZE>
+  # Deduplication strategy: reject - reject messages(dlq), ignore - ignore messages (default: ignore)
+  #dedup_strategy: ignore
+  # Error handling strategy: ignore - skip, dlq - store rejected messages in a dead letter queue
+  #error_handling: dlq
+  # Dead letter queue max messages per stream
+  #dlq_max_messages: 1000
+  # Target data type: hash/json - RedisJSON module must be in use in the target DB
+  target_data_type: json
+  # Number of processes to use when syncing initial data
+  #initial_sync_processes: 4
+  # Checks if the batch has been written to the replica shard
+  #wait_enabled: false
+  # Timeout in milliseconds when checking write to the replica shard
+  #wait_timeout: 1000
+  # Ensures that a batch has been written to the replica shard and keeps retrying if not
+  #retry_on_replica_failure: true
