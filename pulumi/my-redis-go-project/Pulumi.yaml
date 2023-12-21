@@ -1,0 +1,3 @@
+name: glau-go-v3
+runtime: go
+description: A minimal RedisCloud Pulumi YAML program
