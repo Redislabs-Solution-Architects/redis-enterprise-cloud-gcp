@@ -21,7 +21,9 @@ output:
       schema: public
       table: emp
       keys:
-        - user_id
+        - fname
+        - lname
       mapping:
         - fname
         - lname
+        - email
