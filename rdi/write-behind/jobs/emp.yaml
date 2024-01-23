@@ -18,7 +18,7 @@ output:
   - uses: relational.write
     with:
       connection: psql
-      schema: postgres
+      schema: public
       table: emp
       keys:
         - user_id
