@@ -7,12 +7,8 @@ source:
 transform:
   - uses: rename_field
     with:
-      from_field: first_name
-      to_field: fname
-  - uses: rename_field
-    with:
-      from_field: last_name
-      to_field: lname
+      from_field: email_addr
+      to_field: email
 
 output:
   - uses: relational.write
@@ -26,4 +22,3 @@ output:
       mapping:
         - fname
         - lname
-        - email
