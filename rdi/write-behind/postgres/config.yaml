@@ -1,0 +1,27 @@
+connections:
+  psql:
+    type: postgresql
+    host: $POSTGRESQL_INSTANCE_IP
+    port: 5432
+    database: postgres
+    user: postgres
+    password: postgres
+applier:
+  # Interval (in seconds) on which to perform retry on failure (default: 5)
+  #on_failed_retry_interval: <RETRY_INTERVAL_IN_SEC>
+  # The batch size on which data will be written to target (default: 2000)
+  #batch: <BATCH_SIZE>
+  # Interval (in ms) in which data will be written to target even if batch size was not reached (default: 100)
+  #duration: <DURATION_IN_MS>
+  # Error handling strategy: ignore - skip, dlq - store rejected messages in a dead letter queue (default: dlq)
+  #error_handling: <ERROR_HANDLING_STRATEGY>
+  # Dead letter queue max messages per stream (default: 1000)
+  #dlq_max_messages: <DLQ_MAX_MESSAGES>
+  # Target data type: hash/json - RedisJSON module must be in use in the target DB (default:hash)
+  #target_data_type: <TARGET_DATA_TYPE>
+  # Number of processes to use when syncing initial data (default:4)
+  #initial_sync_processes: <INITIAL_SYNC_PROCESSES>
+  # Checks if the batch has been written to the replica shard (default: false)
+  #wait_enabled: <WAIT_ENABLED>
+  # Ensures that a batch has been written to the replica shard and keeps retrying if not (default: true)
+  #retry_on_replica_failure: <RETRY_ON_REPLICA_FAILURE>
