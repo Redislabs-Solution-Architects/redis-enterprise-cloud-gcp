@@ -89,7 +89,7 @@ https://rec.<ingress-external-ip>.nip.io:443
 For example:
 https://rec.34.82.246.32.nip.io:443
 ```
-Log in using demo@redislabs.com and the password collected above to view the cluster information in CM.
+Log in using demo@redis.com and the password collected above to view the cluster information in CM.
 
 
 
