@@ -1,0 +1,24 @@
+source:
+  redis:
+    key_pattern: emp:*
+    trigger: write-behind
+    exclude_commands: ["json.del"]
+
+transform:
+  - uses: rename_field
+    with:
+      from_field: email_addr
+      to_field: email
+
+output:
+  - uses: relational.write
+    with:
+      connection: psql
+      schema: public
+      table: emp
+      keys:
+        - fname
+        - lname
+      mapping:
+        - fname
+        - lname
