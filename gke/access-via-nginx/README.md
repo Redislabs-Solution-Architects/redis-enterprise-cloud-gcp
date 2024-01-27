@@ -78,7 +78,7 @@ Replace &lt;ingress-external-ip&gt; with external IP of the Nginx ingress contro
 ```
 kubectl apply -f rec-ingress.yaml -n redis
 ```
-Grab the password for demo@redislabs.com user for accessing REC's configuration manager (CM):
+Grab the password for demo@redis.com user for accessing REC's configuration manager (CM):
 ```
 kubectl get secrets -n redis rec  -o json | jq '.data | {password}[] | @base64d'
 ```
